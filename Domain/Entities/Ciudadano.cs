@@ -1,6 +1,4 @@
-﻿
-
-using SADVO.Domain.Entities.Common.BaseEntity;
+﻿using SADVO.Domain.Entities.Common.BaseEntity;
 
 namespace SADVO.Domain.Entities
 {
