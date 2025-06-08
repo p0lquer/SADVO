@@ -5,7 +5,7 @@
 
 namespace SADVO.Domain.Entities
 {
-    public class Alianzas_Politicas
+    public class Alianzas_Politica
     {
 
         

@@ -6,7 +6,8 @@ namespace SADVO.Domain.Entities.Common.BaseEntity
     {
         public TId Id { get; set; }
         public required  string Nombre { get; set; }
-       
+        public required bool EsActivo { get; set; } 
+
     }
     
 }
