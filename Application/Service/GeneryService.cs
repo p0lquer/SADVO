@@ -1,8 +1,16 @@
-﻿using SADVO.Application.Interface.Service;
+﻿using SADVO.Application.Interface.Repository;
+using SADVO.Application.Interface.Service;
 namespace SADVO.Application.Service
 {
     public class GeneryService<T> : IGeneryService<T> where T : class
     {
+        private IAlianzasPoliticasRepository alianzasPoliticasRepository;
+
+        public GeneryService(IAlianzasPoliticasRepository alianzasPoliticasRepository)
+        {
+            this.alianzasPoliticasRepository = alianzasPoliticasRepository;
+        }
+
         public Task<T> CreateAsync(T entity)
         {
             throw new NotImplementedException();
