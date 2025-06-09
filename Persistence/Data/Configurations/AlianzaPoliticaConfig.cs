@@ -38,7 +38,7 @@ namespace SADVO.Persistence.Data.Configurations
                    .HasForeignKey(a => a.PartidoReceptorId)
                    .OnDelete(DeleteBehavior.Restrict);
             
-            // Restricción única para evitar solicitudes duplicadas
+            // Restricción única para evitar duplicados
                         builder.HasIndex(a => new { a.PartidoSolicitanteId, a.PartidoReceptorId })
                 .IsUnique();
         }
