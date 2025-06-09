@@ -10,7 +10,9 @@ namespace SADVO.Domain.Entities
      
 
         public required string Foto { get; set; }
-        public required Partido_Politico Partido { get; set; }
+
+        public required Puesto_Electivo PuestoElectivo { get; set; } //fk
+        public required Partido_Politico Partido { get; set; } //fk
         public ICollection<Asignar_Candidato>? Asignar_Candidato { get; set; }
     }
    

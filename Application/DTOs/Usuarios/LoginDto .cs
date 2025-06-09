@@ -1,6 +1,6 @@
 ﻿
 
-using SADVO.Application.DTOs.Common;
+using SADVO.Application.DTOs.Usuarios;
 
 namespace SADVO.Application.DTOs.Usuarios
 {

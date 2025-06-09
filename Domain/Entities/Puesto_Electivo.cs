@@ -9,6 +9,7 @@ namespace SADVO.Domain.Entities
      
         public required string Description { get; set; }
 
+        public ICollection<Candidato>? Candidatos { get; set; } //fk
         public ICollection<Eleccion>? Eleccion { get; set; }
     }
 }

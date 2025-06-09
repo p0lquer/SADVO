@@ -1,9 +1,33 @@
+
+using Microsoft.EntityFrameworkCore;
+using SADVO.Persistence.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddDbContext<SADVOContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    b => b.MigrationsAssembly("SADVOWeb")
+    ));
+
 var app = builder.Build();
+
+//builder.Services.AddSession(opt =>
+//{
+//    opt.IdleTimeout = TimeSpan.FromMinutes(60);
+//    opt.Cookie.HttpOnly = true;
+//});
+
+//builder.Services.AddPersistenceLayerIoc(builder.Configuration);
+//builder.Services.AddApplicationLayerIoc();
+//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//builder.Services.AddScoped<IUserSession, UserSession>();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -26,4 +50,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.Run();
+await app.RunAsync();

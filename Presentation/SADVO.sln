@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.36105.23 d17.13
+VisualStudioVersion = 17.13.36105.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SADVO", "SADVO.csproj", "{56EE7AB1-E362-4E22-9CFE-3B80D399E647}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SADVOWeb", "SADVOWeb.csproj", "{56EE7AB1-E362-4E22-9CFE-3B80D399E647}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SADVO.Application", "..\Application\SADVO.Application.csproj", "{59ABE545-45E5-4B91-BA06-0FBDD2C35001}"
 EndProject
