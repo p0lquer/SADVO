@@ -4,9 +4,9 @@ using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Interface.Repository
 {
-    public interface IAlianzasPoliticasRepository : IGeneryRepository<Alianzas_Politicas>
+    public interface IAlianzasPoliticasRepository : IGeneryRepository<Alianzas_Politica>
     {
-        Task<IEnumerable<Alianzas_Politicas>> GetAlianzasByPartidoAsync(int partidoId);
+        Task<IEnumerable<Alianzas_Politica>> GetAlianzasByPartidoAsync(int partidoId);
 
         Task<bool> ExisteAlianzaAsync(int partidoId);
 

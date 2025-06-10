@@ -5,7 +5,7 @@ using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Service
 {
-    public class AlianzasPoliticasService : GeneryService<Alianzas_Politicas>, IAlianzasPoliticasServicen
+    public class AlianzasPoliticasService : GeneryService<Alianzas_Politica>, IAlianzasPoliticasServicen
     {
         private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
 
@@ -14,12 +14,12 @@ namespace SADVO.Application.Service
             _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }
 
-        public Task<bool> CrearAlianzaAsync(Alianzas_Politicas alianza)
+        public Task<bool> CrearAlianzaAsync(Alianzas_Politica alianza)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Alianzas_Politicas>> GetAlianzasByPartidoAsync(int partidoId)
+        public Task<IEnumerable<Alianzas_Politica>> GetAlianzasByPartidoAsync(int partidoId)
         {
             throw new NotImplementedException();
         }

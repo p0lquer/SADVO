@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application\SADVO.Application.csproj" />
+    <ProjectReference Include="..\Domain\SADVO.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

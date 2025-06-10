@@ -15,6 +15,13 @@ namespace SADVO.Persistence.Context
         public DbSet<Partido_Politico> PartidosPoliticos { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
 
+        public DbSet<Alianzas_Politica> AlianzasPoliticas { get; set; }
+
+        public DbSet<Puesto_Electivo> PuestosElectivos { get; set; }
+
+        public DbSet<Asignar_Candidato> AsignarCandidatos { get; set; }
+        public DbSet<Dirigente_Politico> DirigentesPoliticos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

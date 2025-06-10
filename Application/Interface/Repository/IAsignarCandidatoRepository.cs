@@ -11,7 +11,7 @@ namespace SADVO.Application.Interface.Repository
 
         Task<IEnumerable<Asignar_Candidato>> GetAsignacionesByPuestoElectivoAsync(int puestoElectivoId);
 
-        Task<IEnumerable<Asignar_Candidato>> GetAsignacionesByTipoCandidatoAsync(TypeCandidate tipoCandidato);
+      Task<IEnumerable<Asignar_Candidato>> GetAsignacionesByTipoCandidatoAsync(TypeCandidate tipoCandidato);
 
         Task<bool> ExisteAsignacionAsync(int candidatoId, int puestoElectivoId);
 
