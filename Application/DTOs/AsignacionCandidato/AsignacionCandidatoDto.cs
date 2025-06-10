@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SADVO.Domain.Enumns
+namespace SADVO.Application.DTOs.AsignacionDirigente
 {
-    public class EstadoUsuario
+    public class AsignacionCandidatoDto
     {
     }
 }
