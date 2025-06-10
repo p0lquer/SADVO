@@ -1,6 +1,5 @@
-﻿
-
-using SADVO.Domain.Entities.Common.BaseEntity;
+﻿using SADVO.Domain.Entities.Common.BaseEntity;
+using SADVO.Domain.Enumns;
 
 namespace SADVO.Domain.Entities
 {
@@ -12,6 +11,9 @@ namespace SADVO.Domain.Entities
 
         public  required Partido_Politico PartidoPolitico { get; set; }  
 
+        
+        public required TypeCandidate typeCandidate { get; set; }
+    
         public required ICollection<Puesto_Electivo> PuestoElectivo { get; set; }
    }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace SADVO.Domain.Entities
+﻿namespace SADVO.Domain.Entities
 {
     public class Dirigente_Politico
     {
