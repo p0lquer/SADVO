@@ -15,7 +15,7 @@ namespace SADVO.Domain.Entities
         public required Puesto_Electivo PuestoElectivo { get; set; } //fk
         public required Partido_Politico Partido { get; set; } //fk
         public ICollection<Asignar_Candidato>? Asignar_Candidato { get; set; }
-
+        public TypeCandidate TypeCandidate { get; set; }
     }
    
 }

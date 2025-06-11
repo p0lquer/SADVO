@@ -15,6 +15,7 @@ namespace SADVO.Persistence.Context
         public DbSet<Partido_Politico> PartidosPoliticos { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
 
+        public DbSet<Voto> Votos { get; set; }
         public DbSet<Alianzas_Politica> AlianzasPoliticas { get; set; }
 
         public DbSet<Puesto_Electivo> PuestosElectivos { get; set; }
