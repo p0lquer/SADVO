@@ -8,6 +8,6 @@ namespace SADVO.Domain.Entities
         public required string NumeroIdentificacion { get; set; }
         public required string Email { get; set; }
 
-        public required bool EsActivo { get; set; } = true;
+       
     }
 }

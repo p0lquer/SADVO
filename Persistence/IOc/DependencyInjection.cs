@@ -13,22 +13,6 @@ namespace SADVO.Persistence.IOc
     {
         public static IServiceCollection AddPersistenceInfrastructure(this IServiceCollection services)
         {
-            // Register DbContext
-            //services.AddDbContext<RestaurantDbContext>(options =>
-            //{
-            //    options.UseNpgsql(
-            //        configuration.GetConnectionString("DefaultConnection"),
-            //        npgsqlOptions =>
-            //        {
-            //            npgsqlOptions.MigrationsAssembly(typeof(RestaurantDbContext).Assembly.FullName);
-            //            npgsqlOptions.EnableRetryOnFailure(
-            //                maxRetryCount: 3,
-            //                maxRetryDelay: TimeSpan.FromSeconds(10),
-            //                errorCodesToAdd: null);
-            //        })
-            //        .EnableSensitiveDataLogging()
-            //        .LogTo(Console.WriteLine, LogLevel.Information);
-            //});
 
             // Repositories
             services.AddScoped(typeof(IGeneryRepository<>), typeof(GeneryRepository<>));
@@ -39,7 +23,6 @@ namespace SADVO.Persistence.IOc
             services.AddScoped<IAlianzasPoliticasRepository, AlianzasPoliticasRepository>();
             services.AddScoped<IUsuariosRepository, UsuariosRepository>();
             services.AddScoped<IPuestoElectivoRepository, PuestoElectivoRepository>();
-            services.AddScoped<ISolicitudesRepository, SolicitudesRepository>();
             services.AddScoped<IAsignarCandidatoRepository, AsignarCandidatoRepository>();
             services.AddScoped<ICiudadanoRepository,CiudadanoRepository>();
 
@@ -52,7 +35,6 @@ namespace SADVO.Persistence.IOc
             //services.AddScoped<IAlianzasPoliticasService, AlianzasPoliticasService>();
             services.AddScoped<IUsuariosService, UsuariosService>();
             services.AddScoped<IPuestoElectivoService, PuestoElectivoService>();
-            services.AddScoped<ISolicitudesService, SolicitudesService>();
             services.AddScoped<IAsignarCandidatoService, AsignarCandidatoService>();
             services.AddScoped<ICiudadanoService, CiudadanoService>();
 
