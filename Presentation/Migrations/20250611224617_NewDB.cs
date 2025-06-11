@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SADVOWeb.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class NewDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,6 +70,9 @@ namespace SADVOWeb.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ConfirmationPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EsActivo = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -115,6 +118,7 @@ namespace SADVOWeb.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FechaOcurrida = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PartidoPoliticoId = table.Column<int>(type: "int", nullable: false),
+                    typeCandidate = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EsActivo = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -135,7 +139,10 @@ namespace SADVOWeb.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Apellido = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PuestoElectivoId = table.Column<int>(type: "int", nullable: true),
+                    PartidoId = table.Column<int>(type: "int", nullable: true),
                     Foto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    TypeCandidate = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EsActivo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
@@ -154,6 +161,11 @@ namespace SADVOWeb.Migrations
                         principalTable: "PuestosElectivos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Candidatos_PuestosElectivos_PuestoElectivoId",
+                        column: x => x.PuestoElectivoId,
+                        principalTable: "PuestosElectivos",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -213,6 +225,32 @@ namespace SADVOWeb.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Votos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CiudadanoId = table.Column<int>(type: "int", nullable: false),
+                    EleccionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Votos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Votos_Ciudadanos_CiudadanoId",
+                        column: x => x.CiudadanoId,
+                        principalTable: "Ciudadanos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Votos_Elecciones_EleccionId",
+                        column: x => x.EleccionId,
+                        principalTable: "Elecciones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AsignacionesCandidatos",
                 columns: table => new
                 {
@@ -220,7 +258,8 @@ namespace SADVOWeb.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CandidatoId = table.Column<int>(type: "int", nullable: false),
                     PuestoElectivoId = table.Column<int>(type: "int", nullable: false),
-                    PartidoPoliticoId = table.Column<int>(type: "int", nullable: false)
+                    PartidoPoliticoId = table.Column<int>(type: "int", nullable: false),
+                    Tipo_Candidato = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -289,6 +328,11 @@ namespace SADVOWeb.Migrations
                 column: "UsuariosId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Candidatos_PuestoElectivoId",
+                table: "Candidatos",
+                column: "PuestoElectivoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ciudadanos_NumeroIdentificacion",
                 table: "Ciudadanos",
                 column: "NumeroIdentificacion",
@@ -309,6 +353,16 @@ namespace SADVOWeb.Migrations
                 table: "PartidosPoliticos",
                 column: "Siglas",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Votos_CiudadanoId",
+                table: "Votos",
+                column: "CiudadanoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Votos_EleccionId",
+                table: "Votos",
+                column: "EleccionId");
         }
 
         /// <inheritdoc />
@@ -324,16 +378,19 @@ namespace SADVOWeb.Migrations
                 name: "AsignacionesDirigentes");
 
             migrationBuilder.DropTable(
-                name: "Ciudadanos");
+                name: "EleccionPuestos");
 
             migrationBuilder.DropTable(
-                name: "EleccionPuestos");
+                name: "Votos");
 
             migrationBuilder.DropTable(
                 name: "Candidatos");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");
+
+            migrationBuilder.DropTable(
+                name: "Ciudadanos");
 
             migrationBuilder.DropTable(
                 name: "Elecciones");

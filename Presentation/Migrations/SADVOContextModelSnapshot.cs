@@ -89,6 +89,9 @@ namespace SADVOWeb.Migrations
                     b.Property<int>("PuestoElectivoId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Tipo_Candidato")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CandidatoId");
@@ -127,7 +130,18 @@ namespace SADVOWeb.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("PartidoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PuestoElectivoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TypeCandidate")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PuestoElectivoId");
 
                     b.ToTable("Candidatos", (string)null);
                 });
@@ -221,6 +235,9 @@ namespace SADVOWeb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PartidoPoliticoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("typeCandidate")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -321,6 +338,9 @@ namespace SADVOWeb.Migrations
                     b.Property<bool>("EsActivo")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Foto")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -329,9 +349,38 @@ namespace SADVOWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Telefono")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("SADVO.Domain.Entities.Voto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CiudadanoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EleccionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CiudadanoId");
+
+                    b.HasIndex("EleccionId");
+
+                    b.ToTable("Votos", (string)null);
                 });
 
             modelBuilder.Entity("EleccionPuestos", b =>
@@ -382,7 +431,7 @@ namespace SADVOWeb.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SADVO.Domain.Entities.Puesto_Electivo", "Puesto_Electivo")
+                    b.HasOne("SADVO.Domain.Entities.Puesto_Electivo", "_Electivo")
                         .WithMany()
                         .HasForeignKey("PuestoElectivoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -392,7 +441,7 @@ namespace SADVOWeb.Migrations
 
                     b.Navigation("PartidoPolitico");
 
-                    b.Navigation("Puesto_Electivo");
+                    b.Navigation("_Electivo");
                 });
 
             modelBuilder.Entity("SADVO.Domain.Entities.Candidato", b =>
@@ -403,15 +452,21 @@ namespace SADVOWeb.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SADVO.Domain.Entities.Puesto_Electivo", "PuestoElectivo")
+                    b.HasOne("SADVO.Domain.Entities.Puesto_Electivo", "Puesto_Electivo")
                         .WithMany("Candidatos")
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("SADVO.Domain.Entities.Puesto_Electivo", "PuestoElectivo")
+                        .WithMany()
+                        .HasForeignKey("PuestoElectivoId");
+
                     b.Navigation("Partido");
 
                     b.Navigation("PuestoElectivo");
+
+                    b.Navigation("Puesto_Electivo");
                 });
 
             modelBuilder.Entity("SADVO.Domain.Entities.Dirigente_Politico", b =>
@@ -446,6 +501,25 @@ namespace SADVOWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("PartidoPolitico");
+                });
+
+            modelBuilder.Entity("SADVO.Domain.Entities.Voto", b =>
+                {
+                    b.HasOne("SADVO.Domain.Entities.Ciudadano", "Ciudadano")
+                        .WithMany()
+                        .HasForeignKey("CiudadanoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SADVO.Domain.Entities.Eleccion", "Eleccion")
+                        .WithMany()
+                        .HasForeignKey("EleccionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ciudadano");
+
+                    b.Navigation("Eleccion");
                 });
 
             modelBuilder.Entity("SADVO.Domain.Entities.Candidato", b =>
