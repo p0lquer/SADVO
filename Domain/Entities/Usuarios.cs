@@ -1,6 +1,7 @@
 ﻿
 
 using SADVO.Domain.Entities.Common.BaseEntity;
+using SADVO.Domain.Enumns;
 
 namespace SADVO.Domain.Entities
 {
@@ -11,6 +12,11 @@ namespace SADVO.Domain.Entities
         public required string Password { get; set; } 
         public required string ConfirmationPassword { get; set; }
 
+        public string? Telefono { get; set; }
+
+        public string? Foto { get; set; }
+
+        public RolUsuario Role { get; set; } 
         public  ICollection<Dirigente_Politico>? DirigentePoliticos { get; set; }
     }
 }
