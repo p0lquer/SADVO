@@ -58,12 +58,12 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El email no puede ser null o vacío y debe tener un máximo de 50 caracteres.", nameof(email));
                 }
-                return await Task.FromResult(_context.AlianzasPoliticas.Any(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase)));
+                // Assuming 'Email' is not a property of 'Alianzas_Politica', replace it with a valid property or remove the check.
+                throw new NotImplementedException("The 'Email' property does not exist in 'Alianzas_Politica'. Update the logic accordingly.");
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error checking if alliance with email '{email}' exists", ex);
-
             }
         }
 
@@ -97,12 +97,13 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El email no puede ser null o vacío y debe tener un máximo de 50 caracteres.", nameof(email));
                 }
-                return await Task.FromResult(_context.AlianzasPoliticas.FirstOrDefault(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase)));
+                // Assuming 'Email' is not a property of 'Alianzas_Politica', this method is invalid.
+                // Replace the logic with a valid property or remove the method entirely.
+                throw new NotImplementedException("The 'Email' property does not exist in 'Alianzas_Politica'. Update the logic accordingly.");
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving alliance by email {email}", ex);
-
             }
         }
 

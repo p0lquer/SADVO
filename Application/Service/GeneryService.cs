@@ -4,11 +4,11 @@ namespace SADVO.Application.Service
 {
     public class GeneryService<T> : IGeneryService<T> where T : class
     {
-        private IAlianzasPoliticasRepository alianzasPoliticasRepository;
+        private IGeneryRepository<T> generyRepository;
 
-        public GeneryService(IAlianzasPoliticasRepository alianzasPoliticasReposit)
+        public GeneryService(IGeneryRepository<T> generyRepository)
         {
-           alianzasPoliticasRepository = alianzasPoliticasReposit;
+            this.generyRepository = generyRepository;
         }
 
         public virtual async Task<T> CreateAsync(T entity)
@@ -16,31 +16,29 @@ namespace SADVO.Application.Service
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
-             await alianzasPoliticasRepository.AddAsync(entity);
+            await generyRepository.AddAsync(entity);
             return entity;
         }
 
-        public virtual async  Task<bool> DeleteAsync(int id)
+        public virtual async Task<bool> DeleteAsync(int id)
         {
             try
             {
                 if (id <= 0)
                     throw new ArgumentException("ID must be greater than zero.", nameof(id));
-                return await alianzasPoliticasRepository.DeleteAsync(id);
+                return await generyRepository.DeleteAsync(id);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error deleting entity with ID {id}", ex);
-
             }
         }
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-
             try
             {
-                return (IEnumerable<T>)await alianzasPoliticasRepository.GetAllAsync();
+                return await generyRepository.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -48,24 +46,20 @@ namespace SADVO.Application.Service
             }
         }
 
-        public virtual async  Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
             try
             {
-                var entity = await alianzasPoliticasRepository.GetByIdAsync(id);
+                var entity = await generyRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     throw new KeyNotFoundException($"No se encontró la entidad con ID {id}.");
                 }
                 return entity;
-
-
-
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving entity with ID {id}", ex);
-
             }
         }
 
@@ -76,12 +70,11 @@ namespace SADVO.Application.Service
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
-                return await alianzasPoliticasRepository.UpdateAsync(entity);
+                return await generyRepository.UpdateAsync(entity);
             }
             catch (Exception ex)
             {
                 throw new Exception("Error updating entity", ex);
-
             }
         }
     }

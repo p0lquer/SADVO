@@ -6,10 +6,10 @@ namespace SADVO.Application.Service
 {
     public class UsuariosService : GeneryService<Usuarios>, IUsuariosService
     {
-        private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
-        public UsuariosService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base(alianzasPoliticasRepository)
+        private readonly IUsuariosRepository _usuariosRepository;
+        public UsuariosService(IUsuariosRepository usuariosRepository) : base(usuariosRepository)
         {
-            _alianzasPoliticasRepository = alianzasPoliticasRepository;
+            _usuariosRepository = usuariosRepository;
         }
 
         public async Task<Usuarios?> AutenticarUsuarioAsync(string email, string password)
@@ -20,7 +20,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El email y la contraseña no pueden ser nulos o vacíos.");
                 }
-                var usuario = await _alianzasPoliticasRepository.GetUsuarioByEmailAsync(email);
+                var usuario = await _usuariosRepository.GetByEmailAsync(email); // Correct method name
                 if (usuario == null)
                 {
                     return null; // Usuario no encontrado
@@ -32,7 +32,6 @@ namespace SADVO.Application.Service
             catch (Exception ex)
             {
                 throw new Exception("Error al autenticar al usuario.", ex);
-
             }
         }
 
@@ -45,7 +44,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID de usuario, la contraseña actual y la nueva no pueden ser nulos o vacíos.");
                 }
-                var usuario = await _alianzasPoliticasRepository.GetByIdAsync(usuarioId);
+                var usuario = await _usuariosRepository.GetByIdAsync(usuarioId);
                 if (usuario == null)
                 {
                     return false; // Usuario no encontrado
@@ -68,7 +67,8 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID de usuario debe ser mayor que cero.", nameof(usuarioId));
                 }
-                return await _alianzasPoliticasRepository.GetUsuarioConRolesAsync(usuarioId);
+                // Updated method call to match the repository interface
+                return await _usuariosRepository.GetUsuarioWithDirigentesAsync(usuarioId);
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El email no puede ser null o vacío y debe tener un máximo de 50 caracteres.", nameof(email));
                 }
-                return await _alianzasPoliticasRepository.ExisteEmailAsync(email);
+                return await _usuariosRepository.ExisteEmailAsync(email);
             }
             catch (Exception ex)
             {

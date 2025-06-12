@@ -8,6 +8,7 @@ namespace SADVO.Persistence.Repository
     public class DirigentePoliticoRepository : GeneryRepository<Dirigente_Politico>, IDirigentePoliticoRepository
     {
         private readonly SADVOContext _context;
+
         public DirigentePoliticoRepository(SADVOContext context) : base(context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -21,12 +22,14 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("Los IDs de usuario y partido político deben ser mayores que cero.");
                 }
-                return await Task.FromResult(_context.DirigentesPoliticos.Any(d => d.UsuarioId == usuarioId && d.PartidoPoliticoId == partidoPoliticoId));
+
+                // CORREGIDO: Usar AnyAsync en lugar de Task.FromResult
+                return await _context.DirigentesPoliticos
+                    .AnyAsync(d => d.UsuarioId == usuarioId && d.PartidoPoliticoId == partidoPoliticoId);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error checking if political leader exists for user ID {usuarioId} and party ID {partidoPoliticoId}", ex);
-
             }
         }
 
@@ -38,14 +41,17 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoPoliticoId));
                 }
-                return await Task.FromResult(_context.DirigentesPoliticos
+
+                // CORREGIDO: Usar ToListAsync y agregar Include para cargar entidades relacionadas
+                return await _context.DirigentesPoliticos
                     .Where(d => d.PartidoPoliticoId == partidoPoliticoId)
-                    .AsEnumerable());
+                    .Include(d => d.Usuario)
+                    .Include(d => d.PartidoPolitico)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving political leaders for party with ID {partidoPoliticoId}", ex);
-
             }
         }
 
@@ -57,14 +63,17 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El ID del usuario debe ser mayor que cero.", nameof(usuarioId));
                 }
-                return await Task.FromResult(_context.DirigentesPoliticos
+
+                // CORREGIDO: Usar ToListAsync y agregar Include
+                return await _context.DirigentesPoliticos
                     .Where(d => d.UsuarioId == usuarioId)
-                    .AsEnumerable());
+                    .Include(d => d.Usuario)
+                    .Include(d => d.PartidoPolitico)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving political leaders for user with ID {usuarioId}", ex);
-
             }
         }
 
@@ -76,9 +85,12 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El ID del dirigente debe ser mayor que cero.", nameof(dirigenteId));
                 }
-                return await Task.FromResult(_context.DirigentesPoliticos
+
+                // CORREGIDO: Usar FirstOrDefaultAsync
+                return await _context.DirigentesPoliticos
+                    .Include(d => d.Usuario)
                     .Include(d => d.PartidoPolitico)
-                    .FirstOrDefault(d => d.Id == dirigenteId));
+                    .FirstOrDefaultAsync(d => d.Id == dirigenteId);
             }
             catch (Exception ex)
             {

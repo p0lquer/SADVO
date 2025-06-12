@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SADVO.Models;
 
-namespace SADVO.Controllers
+namespace SADVOWeb.Controllers
 {
     public class AdminController : Controller
     {

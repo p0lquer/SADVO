@@ -7,9 +7,13 @@ namespace SADVO.Application.Service
 {
     public class CandidatoService : GeneryService<Candidato>, ICandidatoService
     {
+        private readonly IGeneryRepository<Candidato> _candidatoRepository;
         private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
-        public CandidatoService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base(alianzasPoliticasRepository)
+
+        public CandidatoService(IGeneryRepository<Candidato> candidatoRepository, IAlianzasPoliticasRepository alianzasPoliticasRepository)
+            : base(candidatoRepository)
         {
+            _candidatoRepository = candidatoRepository;
             _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }
 

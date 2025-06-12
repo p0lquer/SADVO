@@ -1,6 +1,4 @@
-﻿
-
-using SADVO.Domain.Entities;
+﻿using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Interface.Service
 {
@@ -11,6 +9,6 @@ namespace SADVO.Application.Interface.Service
         Task<bool> ActualizarLogoPartidoAsync(int partidoId, string nuevoLogo);
         Task<bool> ValidarSiglasUnicasAsync(string siglas);
         Task<Partido_Politico?> GetPartidoConDetallesAsync(int partidoId);
-
+        Task<Partido_Politico?> GetBySiglasAsync(string siglas);
     }
 }

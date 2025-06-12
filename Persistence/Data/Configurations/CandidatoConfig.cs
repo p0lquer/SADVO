@@ -36,10 +36,10 @@ namespace SADVO.Persistence.Data.Configurations
               .HasForeignKey(c => c.Id)
               .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(c => c.Puesto_Electivo)
-                .WithMany(p => p.Candidatos)
-                .HasForeignKey(c => c.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(c => c.PuestoElectivo)
+               .WithMany(p => p.Candidatos)
+               .HasForeignKey(c => c.PuestoElectivoId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

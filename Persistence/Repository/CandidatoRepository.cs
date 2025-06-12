@@ -106,7 +106,7 @@ namespace SADVO.Persistence.Repository
         {
             try
             {
-                return Task.FromResult(_context.Candidatos.Where(c => c.typeCandidate == tipoCandidato).AsEnumerable());
+                return Task.FromResult(_context.Candidatos.Where(c => c.TypeCandidate == tipoCandidato).AsEnumerable());
             }
             catch (Exception ex)
             {

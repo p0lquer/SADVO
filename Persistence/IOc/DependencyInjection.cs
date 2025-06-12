@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using SADVO.Application.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Application.Service;
+using SADVO.Application.Service.SADVO.Application.Service;
 using SADVO.Persistence.Repository;
 
 namespace SADVO.Persistence.IOc

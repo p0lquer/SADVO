@@ -7,13 +7,13 @@ using SADVO.Domain.Enumns;
 
 namespace SADVO.Application.Service
 {
-    public class AsignarCandidatoService : GeneryService<AsignarCandidatoService>, IAsignarCandidatoService
+    public class AsignarCandidatoService : GeneryService<Asignar_Candidato>, IAsignarCandidatoService
     {
         private readonly IAsignarCandidatoService _service;
-        public AsignarCandidatoService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base(alianzasPoliticasRepository)
-        {
 
-            _service = (IAsignarCandidatoService?)(alianzasPoliticasRepository ?? throw new ArgumentNullException(nameof(alianzasPoliticasRepository))); 
+        public AsignarCandidatoService(IAsignarCandidatoService service, IGeneryRepository<Asignar_Candidato> generyRepository) : base(generyRepository)
+        {
+            _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         public async Task<bool> AsignarCandidatoAPuestoAsync(int candidatoId, int puestoElectivoId, TypeCandidate tipoCandidato)
