@@ -65,7 +65,7 @@ namespace SADVO.Application.Service
             try
             {
 
-                return (IEnumerable<Puesto_Electivo>)await Task.FromResult(_alianzasPoliticasRepository.GetAllAsync());
+                return await _alianzasPoliticasRepository.GetAllAsync();
                    
             }
             catch (Exception ex)
