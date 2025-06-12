@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using SADVO.Domain.Entities.Common.BaseEntity;
-using SADVO.Domain.Enumns;
+﻿using SADVO.Domain.Entities.Common.BaseEntity;
+
 
 namespace SADVO.Domain.Entities
 {
@@ -14,17 +13,18 @@ namespace SADVO.Domain.Entities
 
 
         // Propiedades de navegación para alianzas
-        public  ICollection<Alianzas_Politica> AlianzasSolicitadas { get; set; } = new List<Alianzas_Politica>();
-        public  ICollection<Alianzas_Politica> AlianzasRecibidas { get; set; } = new List<Alianzas_Politica>();
+        public ICollection<Alianzas_Politica> AlianzasSolicitadas { get; set; } = new List<Alianzas_Politica>();
+        public ICollection<Alianzas_Politica> AlianzasRecibidas { get; set; } = new List<Alianzas_Politica>();
 
-        [NotMapped]
-        public IEnumerable<Alianzas_Politica> AlianzasActivas =>
-            AlianzasSolicitadas.Concat(AlianzasRecibidas)
-                .Where(a => a.Estado == EstadoAlianza.Aceptada);
 
-        [NotMapped]
-        public IEnumerable<Alianzas_Politica> SolicitudesPendientes =>
-            AlianzasRecibidas.Where(a => a.Estado == EstadoAlianza.Pendiente);
+        //[NotMapped]
+        //public IEnumerable<Alianzas_Politica> AlianzasActivas =>
+        //    AlianzasSolicitadas.Concat(AlianzasRecibidas)
+        //        .Where(a => a.Estado == EstadoAlianza.Aceptada);
+
+        //[NotMapped]
+        //public IEnumerable<Alianzas_Politica> SolicitudesPendientes =>
+        //    AlianzasRecibidas.Where(a => a.Estado == EstadoAlianza.Pendiente);
 
 
 

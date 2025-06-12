@@ -17,11 +17,13 @@ namespace SADVO.Domain.Entities
         public DateTime? FechaRespuesta { get; set; }
         public EstadoAlianza Estado { get; set; } = EstadoAlianza.Pendiente;
 
+
         public Partido_Politico PartidoSolicitante { get; set; } = null!;
         public Partido_Politico PartidoReceptor { get; set; } = null!;
         public string Apellido { get; set; } = null!;
         public string Nombre { get; set; } = null!;
         public string Descripcion { get; set; } = null!;
+
     }
 
 }

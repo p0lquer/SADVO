@@ -13,6 +13,11 @@ namespace SADVO.Domain.Entities
         public required string ConfirmationPassword { get; set; }
         public required RolUsuario RolUsuario { get; set; }
 
+        public string? Telefono { get; set; }
+
+        public string? Foto { get; set; }
+
+        public RolUsuario Role { get; set; } 
         public  ICollection<Dirigente_Politico>? DirigentePoliticos { get; set; }
     }
 }

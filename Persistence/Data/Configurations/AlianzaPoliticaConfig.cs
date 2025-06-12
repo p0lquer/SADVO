@@ -29,17 +29,18 @@ namespace SADVO.Persistence.Data.Configurations
 
 
             builder.HasOne(a => a.PartidoSolicitante)
-          .WithMany(p => p.AlianzasSolicitadas)
-          .HasForeignKey(a => a.PartidoSolicitanteId)
-          .OnDelete(DeleteBehavior.Restrict);
+      .WithMany(p => p.AlianzasSolicitadas)
+      .HasForeignKey(a => a.PartidoSolicitanteId)
+      .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(a => a.PartidoReceptor)
-                   .WithMany(p => p.AlianzasRecibidas)
-                   .HasForeignKey(a => a.PartidoReceptorId)
-                   .OnDelete(DeleteBehavior.Restrict);
-            
-            // Restricción única para evitar solicitudes duplicadas
-                        builder.HasIndex(a => new { a.PartidoSolicitanteId, a.PartidoReceptorId })
+                .WithMany(p => p.AlianzasRecibidas)
+                .HasForeignKey(a => a.PartidoReceptorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            builder.HasIndex(a => new { a.PartidoSolicitanteId, a.PartidoReceptorId })
                 .IsUnique();
         }
     }

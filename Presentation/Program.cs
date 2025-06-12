@@ -14,21 +14,6 @@ builder.Services.AddDbContext<SADVOContext>(options =>
     ));
 
 var app = builder.Build();
-
-//builder.Services.AddSession(opt =>
-//{
-//    opt.IdleTimeout = TimeSpan.FromMinutes(60);
-//    opt.Cookie.HttpOnly = true;
-//});
-
-//builder.Services.AddPersistenceLayerIoc(builder.Configuration);
-//builder.Services.AddApplicationLayerIoc();
-//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-//builder.Services.AddScoped<IUserSession, UserSession>();
-
-
-
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
