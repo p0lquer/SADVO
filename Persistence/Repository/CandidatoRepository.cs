@@ -1,4 +1,5 @@
-﻿using SADVO.Application.Interface.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using SADVO.Application.Interface.Repository;
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
 using SADVO.Persistence.Context;
@@ -82,16 +83,30 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-        public Task<Candidato?> GetCandidatoWithAsignacionesAsync(int candidatoId)
+        public async Task<Candidato?> GetCandidatoWithAsignacionesAsync(int candidatoId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (candidatoId <= 0)
+                {
+                    throw new ArgumentException("El ID del candidato debe ser mayor que cero.", nameof(candidatoId));
+                }
+                return await _context.Candidatos
+                    .Include(c => c.Asignar_Candidato)
+                    .FirstOrDefaultAsync(c => c.Id == candidatoId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving candidate with ID {candidatoId} and their assignments", ex);
+
+            }
         }
 
         public Task<IEnumerable<Candidato>> GetCandidatosByTypeAsync(TypeCandidate tipoCandidato)
         {
             try
             {
-                return Task.FromResult(_context.Candidatos.Where(c => c.TypeCandidate == tipoCandidato).AsEnumerable());
+                return Task.FromResult(_context.Candidatos.Where(c => c.typeCandidate == tipoCandidato).AsEnumerable());
             }
             catch (Exception ex)
             {

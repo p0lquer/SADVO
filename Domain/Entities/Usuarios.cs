@@ -11,6 +11,7 @@ namespace SADVO.Domain.Entities
         public required string Email { get; set; }
         public required string Password { get; set; } 
         public required string ConfirmationPassword { get; set; }
+        public required RolUsuario RolUsuario { get; set; }
 
         public string? Telefono { get; set; }
 

@@ -1,5 +1,4 @@
-﻿
-using SADVO.Application.Interface.Repository;
+﻿using SADVO.Application.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 
@@ -14,19 +13,53 @@ namespace SADVO.Application.Service
             _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }
 
-        public Task<bool> CrearAlianzaAsync(Alianzas_Politica alianza)
+        public async Task<bool> CrearAlianzaAsync(Alianzas_Politica alianza)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (alianza == null)
+                    throw new ArgumentNullException(nameof(alianza), "La alianza no puede ser nula.");
+                if (alianza.PartidoSolicitanteId <= 0 || alianza.PartidoReceptorId <= 0)
+                    throw new ArgumentException("Los IDs de los partidos deben ser mayores que cero.");
+                 await _alianzasPoliticasRepository.AddAsync(alianza);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear la alianza política.", ex);
+
+            }
         }
 
-        public Task<IEnumerable<Alianzas_Politica>> GetAlianzasByPartidoAsync(int partidoId)
+        public async Task<IEnumerable<Alianzas_Politica>> GetAlianzasByPartidoAsync(int partidoId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (partidoId <= 0)
+                    throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
+
+                return await _alianzasPoliticasRepository.GetAlianzasByPartidoAsync(partidoId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener alianzas para el partido con ID {partidoId}.", ex);
+
+            }
         }
 
-        public Task<bool> ValidarAlianzaExistenteAsync(int partidoId)
+        public async Task<bool> ValidarAlianzaExistenteAsync(int partidoId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (partidoId <= 0)
+                    throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
+                return await _alianzasPoliticasRepository.ExisteAlianzaAsync(partidoId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al validar si existe una alianza para el partido con ID {partidoId}.", ex);
+
+            }
         }
         
     }

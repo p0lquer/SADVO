@@ -1,6 +1,4 @@
-﻿
-
-using SADVO.Application.Interface.Repository;
+﻿using SADVO.Application.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 
@@ -14,24 +12,67 @@ namespace SADVO.Application.Service
             _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }
 
-        public Task<IEnumerable<Eleccion>> GetEleccionesEnRangoFechaAsync(DateTime fechaInicio, DateTime fechaFin)
+        public async Task<IEnumerable<Eleccion>> GetEleccionesEnRangoFechaAsync(DateTime fechaInicio, DateTime fechaFin)
         {
-            throw new NotImplementedException();
+            if (fechaInicio == default || fechaFin == default)
+            {
+                throw new ArgumentException("Las fechas de inicio y fin no pueden ser nulas.");
+            }
+            if (fechaInicio > fechaFin)
+            {
+                throw new ArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
+            }
+            return await _alianzasPoliticasRepository.GetEleccionesByFechaRangoAsync(fechaInicio, fechaFin);
+
         }
 
-        public Task<IEnumerable<Eleccion>> GetHistorialEleccionesAsync(int partidoId)
+        public async Task<IEnumerable<Eleccion>> GetHistorialEleccionesAsync(int partidoId)
         {
-            throw new NotImplementedException();
+            if (partidoId <= 0)
+            {
+                throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoId));
+            }
+            return await _alianzasPoliticasRepository.GetEleccionesByPartidoAsync(partidoId);
+
         }
 
-        public Task<bool> ProgramarEleccionAsync(Eleccion eleccion)
+        public async Task<bool> ProgramarEleccionAsync(Eleccion eleccion)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (eleccion == null)
+                {
+                    throw new ArgumentNullException(nameof(eleccion), "La elección no puede ser nula.");
+                }
+                if (eleccion.FechaOcurrida == default)
+                {
+                    throw new ArgumentException("La fecha de la elección no puede ser nula.", nameof(eleccion.FechaOcurrida));
+                }
+                return await _alianzasPoliticasRepository.AddAsync(eleccion) != null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al programar la elección.", ex);
+
+            }
         }
 
-        public Task<bool> ValidarFechaEleccionAsync(DateTime fecha)
+        public async Task<bool> ValidarFechaEleccionAsync(DateTime fecha)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (fecha == default)
+                {
+                    throw new ArgumentException("La fecha de la elección no puede ser nula.", nameof(fecha));
+                }
+                var elecciones = await _alianzasPoliticasRepository.GetEleccionesByFechaRangoAsync(fecha, fecha);
+                return elecciones.Any();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al validar la fecha de la elección.", ex);
+
+            }
         }
     }
 }
