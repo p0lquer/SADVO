@@ -9,9 +9,10 @@ namespace SADVO.Domain.Entities
 
         public required DateTime FechaOcurrida { get; set; }
 
-        public  required Partido_Politico PartidoPolitico { get; set; }  
+        public  required Partido_Politico PartidoPolitico { get; set; }
 
-        
+
+        public required ICollection<Voto> Votos { get; set; }
         public required TypeCandidate typeCandidate { get; set; }
     
         public required ICollection<Puesto_Electivo> PuestoElectivo { get; set; }
