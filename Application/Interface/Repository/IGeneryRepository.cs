@@ -11,6 +11,7 @@ namespace SADVO.Application.Interface.Repository
         Task<T> AddAsync(T entity);
         Task<T> UpdateAsync(T entity);
         Task<bool> DeleteAsync(int id);
-        Task<Partido_Politico?> GetBySiglasAsync(string siglas);
+
+       
     }
 }
