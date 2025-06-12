@@ -16,7 +16,7 @@ namespace SADVO.Application.Service
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
-             alianzasPoliticasRepository.AddAsync(entity);
+             await alianzasPoliticasRepository.AddAsync(entity);
             return entity;
         }
 
