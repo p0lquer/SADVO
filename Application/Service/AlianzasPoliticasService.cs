@@ -53,8 +53,7 @@ namespace SADVO.Application.Service
             {
                 if (partidoId <= 0)
                     throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
-                 await _alianzasPoliticasRepository.ExisteAlianzaAsync(partidoId);
-                return true;
+                return await _alianzasPoliticasRepository.ExisteAlianzaAsync(partidoId);
             }
             catch (Exception ex)
             {
