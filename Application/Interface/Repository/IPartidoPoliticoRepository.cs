@@ -14,5 +14,6 @@ namespace SADVO.Application.Interface.Repository
 
         Task<bool> ExisteSiglasAsync(string siglas);
 
+
     }
 }

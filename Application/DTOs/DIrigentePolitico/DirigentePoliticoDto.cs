@@ -1,12 +1,25 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace SADVO.Application.DTOs.AsignacionDirigente
 {
 
     public class DirigentePoliticoDto
     {
-        public int UsuarioId { get; internal set; }
-        public int PartidoPoliticoId { get; internal set; }
-        public DirigentePoliticoDto? PartidoPolitico { get; internal set; }
+        public int Id { get; set; }
+
+        [Display(Name = "Usuario")]
+        public int UsuarioId { get; set; }
+
+        [Display(Name = "Partido Político")]
+        public int PartidoPoliticoId { get; set; }
+
+        // Propiedades de navegación para mostrar en las vistas
+        [Display(Name = "Usuario")]
+        public string? UsuarioNombre { get; set; }
+
+        [Display(Name = "Partido Político")]
+        public string? PartidoPoliticoNombre { get; set; }
     }
 
 }

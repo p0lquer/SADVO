@@ -2,13 +2,14 @@
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
 using SADVO.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace SADVO.Persistence.Repository
 {
-    public class EleccionRepository : GeneryRepository<Eleccion>,
-        IEleccionRepository
+    public class EleccionRepository : GeneryRepository<Eleccion>, IEleccionRepository
     {
         private readonly SADVOContext _context;
+
         public EleccionRepository(SADVOContext context) : base(context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -26,14 +27,18 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
                 }
-                return await Task.FromResult(_context.Elecciones
+
+                // CORREGIDO: Usar ToListAsync() en lugar de Task.FromResult y AsEnumerable()
+                return await _context.Elecciones
                     .Where(e => e.FechaOcurrida >= fechaInicio && e.FechaOcurrida <= fechaFin)
-                    .AsEnumerable());
+                    .Include(e => e.PartidoPolitico)
+                    .Include(e => e.PuestoElectivo)
+                    .Include(e => e.Votos)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving elections between {fechaInicio} and {fechaFin}", ex);
-
             }
         }
 
@@ -45,9 +50,14 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoPoliticoId));
                 }
-                return await Task.FromResult(_context.Elecciones
-                    .Where(e => e.Id == partidoPoliticoId)
-                    .AsEnumerable());
+
+                // CORREGIDO: La consulta estaba mal, comparaba e.Id en lugar del ID del partido
+                return await _context.Elecciones
+                    .Where(e => e.PartidoPolitico.Id == partidoPoliticoId)
+                    .Include(e => e.PartidoPolitico)
+                    .Include(e => e.PuestoElectivo)
+                    .Include(e => e.Votos)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -63,15 +73,18 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El ID del puesto electivo debe ser mayor que cero.", nameof(puestoElectivoId));
                 }
-                return await Task.FromResult(_context.Elecciones
-                    .Where(e => e.Id == puestoElectivoId)
-                    .AsEnumerable());
+
+                // CORREGIDO: La consulta estaba mal, comparaba e.Id en lugar del ID del puesto electivo
+                return await _context.Elecciones
+                    .Where(e => e.PuestoElectivo.Any(p => p.Id == puestoElectivoId))
+                    .Include(e => e.PartidoPolitico)
+                    .Include(e => e.PuestoElectivo)
+                    .Include(e => e.Votos)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving elections for electoral position with ID {puestoElectivoId}", ex);
-
-
             }
         }
 
@@ -83,14 +96,17 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("El tipo de candidato no es válido.", nameof(tipoCandidato));
                 }
-                return await Task.FromResult(_context.Elecciones
+
+                return await _context.Elecciones
                     .Where(e => e.TypeCandidate == tipoCandidato)
-                    .AsEnumerable());
+                    .Include(e => e.PartidoPolitico)
+                    .Include(e => e.PuestoElectivo)
+                    .Include(e => e.Votos)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving elections for candidate type {tipoCandidato}", ex);
-
             }
         }
 
@@ -102,15 +118,18 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("La cantidad debe ser mayor que cero.", nameof(cantidad));
                 }
-                return await Task.FromResult(_context.Elecciones
+
+                return await _context.Elecciones
                     .OrderByDescending(e => e.FechaOcurrida)
                     .Take(cantidad)
-                    .AsEnumerable());
+                    .Include(e => e.PartidoPolitico)
+                    .Include(e => e.PuestoElectivo)
+                    .Include(e => e.Votos)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving the most recent {cantidad} elections", ex);
-
             }
         }
     }

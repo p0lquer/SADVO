@@ -15,7 +15,7 @@ namespace SADVO.Persistence.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public Task<bool> ExisteSiglasAsync(string siglas)
+        public Task<bool>ExisteSiglasAsync(string siglas)
         {
             
             if(string.IsNullOrWhiteSpace(siglas))

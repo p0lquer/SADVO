@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SADVO.Application.Interface.Repository;
+using SADVO.Domain.Entities;
 using SADVO.Persistence.Context;
 
 namespace SADVO.Persistence.Repository
@@ -8,13 +9,12 @@ namespace SADVO.Persistence.Repository
     {
         private readonly SADVOContext _context;
         public readonly DbSet<T> Entities;
+
         public GeneryRepository(SADVOContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             Entities = _context.Set<T>();
         }
-
-
 
         public async Task<T> AddAsync(T entity)
         {
@@ -26,24 +26,24 @@ namespace SADVO.Persistence.Repository
                 await Entities.AddAsync(entity);
                 await _context.SaveChangesAsync();
                 return entity;
-
             }
             catch (Exception ex)
             {
-                throw;
+                throw new Exception("Error adding entity.", ex);
             }
         }
+
         public async Task<bool> DeleteAsync(int id)
         {
-            if (id == 0)  
-                throw new ArgumentException("ID cannot be empty.", nameof(id));
+            if (id <= 0)
+                throw new ArgumentException("ID must be greater than zero.", nameof(id));
 
             try
             {
                 var entity = await Entities.FindAsync(id);
                 if (entity != null)
                 {
-                    var isActiveProperty = entity.GetType().GetProperty("IsActive");
+                    var isActiveProperty = entity.GetType().GetProperty("EsActivo");
                     if (isActiveProperty != null && isActiveProperty.PropertyType == typeof(bool))
                     {
                         isActiveProperty.SetValue(entity, false);
@@ -51,7 +51,7 @@ namespace SADVO.Persistence.Repository
                     }
                     else
                     {
-                        _context.Remove(entity);
+                        Entities.Remove(entity);
                     }
                     await _context.SaveChangesAsync();
                     return true;
@@ -60,55 +60,70 @@ namespace SADVO.Persistence.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error deleting entity.", ex);
             }
         }
-
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             try
             {
-                var entities = await Entities.ToListAsync();
-                return entities;
+                return await Entities.ToListAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error retrieving all entities.", ex);
             }
         }
 
-        public Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            if (id == 0)
-                throw new ArgumentException("ID cannot be empty.", nameof(id));
+            if (id <= 0)
+                throw new ArgumentException("ID must be greater than zero.", nameof(id));
+
             try
             {
-                var entity = Entities.Find(id);
+                var entity = await Entities.FindAsync(id);
                 if (entity == null)
-                {
                     throw new KeyNotFoundException($"Entity with ID {id} not found.");
-                }
-                return Task.FromResult(entity);
+                return entity;
             }
             catch (Exception ex)
             {
-                throw;
+                throw new Exception("Error retrieving entity by ID.", ex);
             }
         }
-        public Task<T> UpdateAsync(T entity)
+
+        public async Task<T> UpdateAsync(T entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
+
             try
             {
                 Entities.Update(entity);
-                _context.SaveChanges();
-                return Task.FromResult(entity);
+                await _context.SaveChangesAsync();
+                return entity;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error updating entity.", ex);
+            }
+        }
+
+        public async Task<Partido_Politico?> GetBySiglasAsync(string siglas)
+        {
+            if (string.IsNullOrWhiteSpace(siglas))
+                throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
+
+            try
+            {
+                return await _context.PartidosPoliticos
+                    .FirstOrDefaultAsync(p => p.Siglas == siglas);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving Partido_Politico by siglas.", ex);
             }
         }
     }

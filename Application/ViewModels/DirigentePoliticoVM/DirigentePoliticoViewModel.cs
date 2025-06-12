@@ -1,6 +1,4 @@
-﻿;
-
-namespace SADVO.Application.ViewModels.DirigentePoliticoVM
+﻿namespace SADVO.Application.ViewModels.DirigentePoliticoVM
 {
     public class DirigentePoliticoViewModel
     {

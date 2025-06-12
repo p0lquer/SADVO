@@ -10,6 +10,8 @@ namespace SADVO.Application.Interface.Service
         Task<bool> ValidarCiudadanoUnicoAsync(string numeroIdentificacion, string email);
         Task<bool> ActivarDesactivarCiudadanoAsync(int ciudadanoId, bool estado);
         Task<IEnumerable<Ciudadano>> BuscarCiudadanosAsync(string criterio);
+        Task<IEnumerable<Ciudadano>> GetCiudadanosActivosAsync(); // Added this method
 
+        Task AddAsync(Ciudadano ciudadano);
     }
 }

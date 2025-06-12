@@ -1,5 +1,7 @@
 ﻿
 
+using SADVO.Domain.Entities;
+
 namespace SADVO.Application.Interface.Repository
 {
     public interface IGeneryRepository<T> where T : class
@@ -10,5 +12,6 @@ namespace SADVO.Application.Interface.Repository
         Task<T> UpdateAsync(T entity);
         Task<bool> DeleteAsync(int id);
 
+       
     }
 }

@@ -1,6 +1,4 @@
-﻿
-using SADVO.Application.DTOs.AsignacionDirigente;
-using SADVO.Application.Interface.Repository;
+﻿using SADVO.Application.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 
@@ -8,10 +6,12 @@ namespace SADVO.Application.Service
 {
     public class DirigentePoliticoService : GeneryService<Dirigente_Politico>, IDirigentePoliticoService
     {
-        private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
-        public DirigentePoliticoService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base(alianzasPoliticasRepository)
+        private readonly IDirigentePoliticoRepository _dirigenteRepository; // CORREGIDO: Usar la interfaz específica
+
+        public DirigentePoliticoService(IDirigentePoliticoRepository dirigenteRepository) // CORREGIDO: Inyectar repositorio específico
+            : base(dirigenteRepository)
         {
-            _alianzasPoliticasRepository = alianzasPoliticasRepository;
+            _dirigenteRepository = dirigenteRepository ?? throw new ArgumentNullException(nameof(dirigenteRepository));
         }
 
         public async Task<bool> AsignarDirigenteAPartidoAsync(int usuarioId, int partidoPoliticoId)
@@ -22,19 +22,28 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Los IDs de usuario y partido político deben ser mayores que cero.");
                 }
-                var dirigente = new DirigentePoliticoDto
+
+                // Verificar si ya existe el dirigente para evitar duplicados
+                var dirigenteExistente = await ValidarDirigenteExistenteAsync(usuarioId, partidoPoliticoId);
+                if (dirigenteExistente)
+                {
+                    return false; // Ya existe
+                }
+
+                // Crear la entidad Dirigente_Politico
+                var dirigenteEntity = new Dirigente_Politico
                 {
                     UsuarioId = usuarioId,
-                    PartidoPoliticoId = partidoPoliticoId,
-                    PartidoPolitico = (DirigentePoliticoDto)await _alianzasPoliticasRepository.GetAlianzasByPartidoAsync(partidoPoliticoId)
+                    PartidoPoliticoId = partidoPoliticoId
                 };
-                
-                return true;
+
+                // Guardar en el repositorio
+                var resultado = await _dirigenteRepository.AddAsync(dirigenteEntity);
+                return resultado != null;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error assigning political leader to party with user ID {usuarioId} and party ID {partidoPoliticoId}", ex);
-
             }
         }
 
@@ -46,13 +55,15 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoPoliticoId));
                 }
-                return await _alianzasPoliticasRepository.GetDirigentesByPartidoAsync(partidoPoliticoId);
+
+                return await _dirigenteRepository.GetDirigentesByPartidoAsync(partidoPoliticoId);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error retrieving political leaders for party with ID {partidoPoliticoId}", ex);
             }
         }
+
         public async Task<bool> RemoverDirigenteDePartidoAsync(int usuarioId, int partidoPoliticoId)
         {
             try
@@ -61,11 +72,16 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Los IDs de usuario y partido político deben ser mayores que cero.");
                 }
-                var dirigente = await _alianzasPoliticasRepository.GetDirigentesByUsuarioAsync(usuarioId);
-                if (dirigente != null && dirigente.PartidoPoliticoId == partidoPoliticoId)
-                {
 
-                    return true;
+                // Buscar dirigentes por partido y filtrar por usuario
+                var dirigentesDelPartido = await _dirigenteRepository.GetDirigentesByPartidoAsync(partidoPoliticoId);
+                var dirigente = dirigentesDelPartido?.FirstOrDefault(d => d.UsuarioId == usuarioId);
+
+                if (dirigente != null)
+                {
+                    // Remover el dirigente del repositorio
+                    var resultado = await _dirigenteRepository.DeleteAsync(dirigente.Id);
+                    return resultado;
                 }
                 return false;
             }
@@ -75,9 +91,58 @@ namespace SADVO.Application.Service
             }
         }
 
-        public Task<bool> ValidarDirigenteExistenteAsync(int usuarioId, int partidoPoliticoId)
+        public async Task<bool> ValidarDirigenteExistenteAsync(int usuarioId, int partidoPoliticoId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (usuarioId <= 0 || partidoPoliticoId <= 0)
+                {
+                    throw new ArgumentException("Los IDs de usuario y partido político deben ser mayores que cero.");
+                }
+
+                // CORREGIDO: Usar el método específico del repositorio
+                return await _dirigenteRepository.ExisteDirigenteAsync(usuarioId, partidoPoliticoId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error validating existing political leader with user ID {usuarioId} and party ID {partidoPoliticoId}", ex);
+            }
+        }
+
+        // MÉTODOS ADICIONALES que podrías agregar a la interfaz
+
+        public async Task<IEnumerable<Dirigente_Politico>> GetDirigentesByUsuarioAsync(int usuarioId)
+        {
+            try
+            {
+                if (usuarioId <= 0)
+                {
+                    throw new ArgumentException("El ID del usuario debe ser mayor que cero.", nameof(usuarioId));
+                }
+
+                return await _dirigenteRepository.GetDirigentesByUsuarioAsync(usuarioId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving political leaders for user with ID {usuarioId}", ex);
+            }
+        }
+
+        public async Task<Dirigente_Politico?> GetDirigenteWithDetailsAsync(int dirigenteId)
+        {
+            try
+            {
+                if (dirigenteId <= 0)
+                {
+                    throw new ArgumentException("El ID del dirigente debe ser mayor que cero.", nameof(dirigenteId));
+                }
+
+                return await _dirigenteRepository.GetDirigenteWithDetailsAsync(dirigenteId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving political leader details for dirigente ID {dirigenteId}", ex);
+            }
         }
     }
 }
