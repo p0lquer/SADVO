@@ -15,5 +15,6 @@ namespace SADVO.Domain.Entities
        
     
         public required ICollection<Puesto_Electivo> PuestoElectivo { get; set; }
-   }
+        public TypeCandidate TypeCandidate { get; set; }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿
 
+using SADVO.Application.DTOs.AsignacionDirigente;
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
 
@@ -11,6 +12,6 @@ namespace SADVO.Application.Interface.Service
         Task<bool> AsignarCandidatoAPuestoAsync(int candidatoId, int puestoElectivoId, TypeCandidate tipoCandidato);
         Task<bool> ValidarAsignacionDuplicadaAsync(int candidatoId, int puestoElectivoId);
         Task<bool> RemoverAsignacionAsync(int candidatoId, int puestoElectivoId);
-
+        Task CreateAsync(AsignacionCandidatoDto asignacion);
     }
 }

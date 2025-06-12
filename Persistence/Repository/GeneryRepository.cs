@@ -35,7 +35,7 @@ namespace SADVO.Persistence.Repository
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            if (id == 0) // Fixed condition to check for empty ID  
+            if (id == 0)  
                 throw new ArgumentException("ID cannot be empty.", nameof(id));
 
             try

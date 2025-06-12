@@ -19,6 +19,9 @@ namespace SADVO.Domain.Entities
 
         public Partido_Politico PartidoSolicitante { get; set; } = null!;
         public Partido_Politico PartidoReceptor { get; set; } = null!;
+        public object Apellido { get; set; }
+        public object Nombre { get; set; }
+        public object Descripcion { get; set; }
     }
 
 }
