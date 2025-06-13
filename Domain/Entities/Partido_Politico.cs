@@ -31,7 +31,7 @@ namespace SADVO.Domain.Entities
 
 
         public ICollection<Candidato>? Candidatos { get; set; }
-        public ICollection<List<Dirigente_Politico>>? DirigentePoliticos { get; set; }
+        public ICollection<Dirigente_Politico>? DirigentePoliticos { get; set; }
 
     
     }

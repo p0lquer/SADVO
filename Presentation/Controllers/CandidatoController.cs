@@ -120,7 +120,7 @@ namespace SADVOWeb.Controllers
                     PuestoElectivoId = createCandidatoDto.PuestoElectivoId,
                     Foto = createCandidatoDto.Foto,
                     TypeCandidate = createCandidatoDto.TipoCandidato,
-                    EstadoAlianza = EstadoAlianza.Pendiente,
+                 
                     Nombre = createCandidatoDto.nombre,
                     EsActivo = true,
                     PuestoElectivo = new Puesto_Electivo

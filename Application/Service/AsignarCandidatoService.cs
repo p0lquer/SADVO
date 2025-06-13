@@ -11,13 +11,13 @@ namespace SADVO.Application.Service
     public class AsignarCandidatoService : GeneryService<Asignar_Candidato>, IAsignarCandidatoService
     {
         private readonly IAsignarCandidatoRepository _asignarCandidatoRepository;
-
-        public AsignarCandidatoService(IAsignarCandidatoRepository service, IGeneryRepository<Asignar_Candidato> generyRepository) : base(generyRepository)
+        public AsignarCandidatoService(IAsignarCandidatoRepository service) : base(service)
         {
+
             _asignarCandidatoRepository = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-        public async Task<bool> AsignarCandidatoAPuestoAsync(int candidatoId, int puestoElectivoId, TypeCandidate tipoCandidato)
+        public async Task<bool> AsignarCandidatoAPuestoAsync(int candidatoId, int puestoElectivoId, TypeCandidate tipoCandidato, int partidoPoliticoId)
         {
             try
             {
@@ -25,8 +25,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Los IDs de candidato y puesto electivo deben ser mayores que cero.");
                 }
-                if (await _asignarCandidatoRepository.GetAsignacionesByCandidatoAsync(candidatoId) is IEnumerable<Asignar_Candidato> asignaciones &&
-                    asignaciones.Any(a => a.PuestoElectivoId == puestoElectivoId && a.Tipo_Candidato == tipoCandidato))
+                if (await _asignarCandidatoRepository.ExisteAsignacionAsync(candidatoId, puestoElectivoId))
                 {
                     throw new InvalidOperationException("El candidato ya está asignado a este puesto electivo con el mismo tipo de candidato.");
                 }
@@ -36,8 +35,8 @@ namespace SADVO.Application.Service
                     CandidatoId = candidatoId,
                     PuestoElectivoId = puestoElectivoId,
                     Tipo_Candidato = tipoCandidato,
-                    PartidoPoliticoId = pa
-
+                    PartidoPoliticoId = partidoPoliticoId,
+                    
                 };
                 await _asignarCandidatoRepository.AddAsync(asignacion);
                 return true;
@@ -49,14 +48,24 @@ namespace SADVO.Application.Service
             }
         }
 
+        public Task<bool> AsignarCandidatoAPuestoAsync(int candidatoId, int puestoElectivoId, TypeCandidate tipoCandidato)
+        {
+            throw new NotImplementedException();
+        }
+
         public override async Task<Asignar_Candidato> CreateAsync(Asignar_Candidato entity)
         {
             try
             {
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-                await _service.CreateAsync(entity);
-                return entity;
+                
+
+                if(await _asignarCandidatoRepository.ExisteAsignacionAsync(entity.CandidatoId, entity.PuestoElectivoId))
+                {
+                    throw new InvalidOperationException("El candidato ya está asignado a este puesto electivo.");
+                }
+                return await _asignarCandidatoRepository.AddAsync(entity);
             }
             catch (Exception ex)
             {
@@ -75,10 +84,11 @@ namespace SADVO.Application.Service
                 {
                     CandidatoId = asignacion.CandidatoId,
                     PuestoElectivoId = asignacion.PuestoElectivoId,
-                    TipoCandidato = asignacion.TipoCandidato
+                    TipoCandidato = asignacion.TipoCandidato,
+                    PartidoPoliticoId = asignacion.PartidoPoliticoId
                 };
 
-                await _service.CreateAsync(entity);
+                await CreateAsync(entity);
             }
             catch (Exception ex)
             {
@@ -94,7 +104,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del candidato debe ser mayor que cero.", nameof(candidatoId));
                 }
-                return await _service.GetAsignacionesByCandidatoAsync(candidatoId);
+                return await _asignarCandidatoRepository.GetAsignacionesByCandidatoAsync(candidatoId);
             }
             catch (Exception ex)
             {
@@ -111,13 +121,15 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Los IDs de candidato y puesto electivo deben ser mayores que cero.");
                 }
-                var asignacion = await _service.GetAsignacionesByCandidatoAsync(candidatoId);
-                if (asignacion == null || !asignacion.Any(a => a.PuestoElectivoId == puestoElectivoId))
+
+                var asignacion = await _asignarCandidatoRepository.GetAsignacionesByCandidatoAsync(candidatoId);
+               var asignacionToRemove = asignacion.FirstOrDefault(a => a.PuestoElectivoId == puestoElectivoId);
+                if (asignacionToRemove == null)
                 {
                     throw new InvalidOperationException("La asignación no existe.");
                 }
-                 await _service.RemoverAsignacionAsync(candidatoId, puestoElectivoId);
-                return true;
+             return await _asignarCandidatoRepository.DeleteAsync(asignacionToRemove.Id);
+            
             }
             catch (Exception ex)
             {
@@ -131,7 +143,7 @@ namespace SADVO.Application.Service
             {
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-                return await _service.UpdateAsync(entity);
+                return await _asignarCandidatoRepository.UpdateAsync(entity);
             }
             catch (Exception ex)
             {
@@ -149,7 +161,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Los IDs de candidato y puesto electivo deben ser mayores que cero.");
                 }
-                return await _service.ValidarAsignacionDuplicadaAsync(candidatoId, puestoElectivoId);
+                return await _asignarCandidatoRepository.ExisteAsignacionAsync(candidatoId, puestoElectivoId);
             }
             catch (Exception ex)
             {
@@ -161,7 +173,7 @@ namespace SADVO.Application.Service
         {
             try
             {
-                return _service.GetAllAsync();
+                return _asignarCandidatoRepository.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -177,7 +189,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID debe ser mayor que cero.", nameof(id));
                 }
-                return _service.GetByIdAsync(id);
+                return _asignarCandidatoRepository.GetByIdAsync(id);
             }
             catch (Exception ex)
             {

@@ -15,7 +15,7 @@ namespace SADVO.Domain.Entities
 
     
 
-        public EstadoAlianza EstadoAlianza { get; set; } = EstadoAlianza.Pendiente;
+      //  public EstadoAlianza EstadoAlianza { get; set; } = EstadoAlianza.Pendiente;
 
         public required Puesto_Electivo PuestoElectivo { get; set; } //fk
         public required Partido_Politico Partido { get; set; } //fk

@@ -8,14 +8,12 @@ namespace SADVO.Application.Service
 {
     public class CandidatoService : GeneryService<Candidato>, ICandidatoService
     {
-        private readonly IGeneryRepository<Candidato> _candidatoRepository;
-        private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
+        private readonly ICandidatoRepository _candidatoRepository;
 
-        public CandidatoService(IGeneryRepository<Candidato> candidatoRepository, IAlianzasPoliticasRepository alianzasPoliticasRepository)
+        public CandidatoService(ICandidatoRepository candidatoRepository)
             : base(candidatoRepository)
         {
             _candidatoRepository = candidatoRepository;
-            _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }
 
         public async Task<bool> ActivarDesactivarCandidatoAsync(int candidatoId, bool estado)
@@ -26,13 +24,13 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del candidato debe ser mayor que cero.", nameof(candidatoId));
                 }
-                var candidato = await _alianzasPoliticasRepository.GetByIdAsync(candidatoId);
+                var candidato = await _candidatoRepository.GetByIdAsync(candidatoId);
                 if (candidato == null)
                 {
                     throw new KeyNotFoundException($"Candidato con ID {candidatoId} no encontrado.");
                 }
-                candidato.Estado = EstadoAlianza.Pendiente;
-                await _alianzasPoliticasRepository.UpdateAsync(candidato);
+                candidato.EsActivo = true;
+                await _candidatoRepository.UpdateAsync(candidato);
                 return true;
             }
             catch (Exception ex)
@@ -50,13 +48,13 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del candidato debe ser mayor que cero.", nameof(candidatoId));
                 }
-                var candidato = await _alianzasPoliticasRepository.GetByIdAsync(candidatoId);
+                var candidato = await _candidatoRepository.GetByIdAsync(candidatoId);
                 if (candidato == null)
                 {
                     throw new KeyNotFoundException($"Candidato con ID {candidatoId} no encontrado.");
                 }
-                candidato.Estado  = EstadoAlianza.Pendiente;
-                await _alianzasPoliticasRepository.UpdateAsync(candidato);
+                candidato.EsActivo  =true;
+                await _candidatoRepository.UpdateAsync(candidato);
                 return true;
             }
             catch (Exception ex)
@@ -69,12 +67,12 @@ namespace SADVO.Application.Service
         {
             try
             {
-                var candidatos = await _alianzasPoliticasRepository.GetAllAsync();
+                var candidatos = await _candidatoRepository.GetAllAsync();
                 if (candidatos == null || !candidatos.Any())
                 {
                     return Enumerable.Empty<Candidato>();
                 }
-                return (IEnumerable<Candidato>)candidatos.Where(c => c.Estado == EstadoAlianza.Pendiente);
+                return (IEnumerable<Candidato>)candidatos.Where(c => c.EsActivo == true);
             }
             catch (Exception ex)
             {
@@ -91,8 +89,8 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
                 }
-                var candidatos = await _alianzasPoliticasRepository.GetAllAsync();
-                return (IEnumerable<Candidato>) candidatos.Where(c => c.PartidoSolicitanteId == partidoId && c.Estado == EstadoAlianza.Pendiente);
+                var candidatos = await _candidatoRepository.GetAllAsync();
+                return (IEnumerable<Candidato>) candidatos.Where(c => c.Equals(partidoId) && c.Partido.EsActivo);
             }
             catch (Exception ex)
             {
@@ -113,8 +111,8 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
                 }
-                var candidatos = await _alianzasPoliticasRepository.GetAllAsync();
-                return !candidatos.Any(c => c.Apellido.Equals(apellido, StringComparison.OrdinalIgnoreCase) && c.PartidoSolicitanteId == partidoId && c.Estado == EstadoAlianza.Pendiente);
+                var candidatos = await _candidatoRepository.GetAllAsync();
+                return !candidatos.Any(c => c.Apellido.Equals(apellido, StringComparison.OrdinalIgnoreCase) && c.PartidoId== partidoId && c.EsActivo == true);
             }
             catch (Exception ex)
             {

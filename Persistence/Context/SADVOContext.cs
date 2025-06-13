@@ -46,6 +46,9 @@ namespace SADVO.Persistence.Context
                     j => j.HasOne<Puesto_Electivo>().WithMany().HasForeignKey("PuestoElectivoId"),
                     j => j.HasOne<Eleccion>().WithMany().HasForeignKey("EleccionId"),
                     j => j.ToTable("EleccionPuestos"));
+
+            
+
         }
 
 

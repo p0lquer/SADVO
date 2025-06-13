@@ -12,7 +12,7 @@ namespace SADVO.Application.DTOs.Usuarios
         [DataType(DataType.Text)]
         public required string UserName { get; set; }
 
-        [Required(ErrorMessage = "DEbe ingresar la contraseña")]
+        [Required(ErrorMessage = "Debe ingresar la contraseña")]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
     }

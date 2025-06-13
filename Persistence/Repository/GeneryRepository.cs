@@ -112,20 +112,6 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-        //public async Task<Partido_Politico?> GetBySiglasAsync(string siglas)
-        //{
-        //    if (string.IsNullOrWhiteSpace(siglas))
-        //        throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
-
-        //    try
-        //    {
-        //        return await _context.PartidosPoliticos
-        //            .FirstOrDefaultAsync(p => p.Siglas == siglas);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error retrieving Partido_Politico by siglas.", ex);
-        //    }
-        //}
+      
     }
 }

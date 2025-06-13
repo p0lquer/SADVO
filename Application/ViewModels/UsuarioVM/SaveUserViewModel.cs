@@ -14,7 +14,7 @@ namespace SADVO.Application.ViewModels.User
         public required string Email { get; set; }
         [Required(ErrorMessage = "Este Campo es obligatorio")]
         [DataType(DataType.Password)]
-        public required string Password { get; set; }
+        public string? Password { get; set; }
 
         [Compare(nameof(Password), ErrorMessage = "Las contraseñas no coinciden")]
         [Required(ErrorMessage = "Este Campo es obligatorio")]
