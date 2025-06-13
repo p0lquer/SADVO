@@ -2,11 +2,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SADVO.Application.Interface.Repository;
+using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Application.Service;
 using SADVO.Application.Service.SADVO.Application.Service;
 using SADVO.Persistence.Repository;
+using SADVO.Interfaces.Interface.Repository;
 
 namespace SADVO.Persistence.IOc
 {

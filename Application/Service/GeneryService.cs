@@ -1,5 +1,6 @@
-﻿using SADVO.Application.Interface.Repository;
+﻿using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
+using SADVO.Interfaces.Interface.Repository;
 namespace SADVO.Application.Service
 {
     public class GeneryService<T> : IGeneryService<T> where T : class

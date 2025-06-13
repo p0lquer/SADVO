@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SADVO.Application.Interface.Repository;
+using SADVO.Domain.Interface.Repository;
 using SADVO.Domain.Entities;
 using SADVO.Persistence.Context;
+using SADVO.Interfaces.Interface.Repository;
 
 namespace SADVO.Persistence.Repository
 {
@@ -111,20 +112,20 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-        public async Task<Partido_Politico?> GetBySiglasAsync(string siglas)
-        {
-            if (string.IsNullOrWhiteSpace(siglas))
-                throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
+        //public async Task<Partido_Politico?> GetBySiglasAsync(string siglas)
+        //{
+        //    if (string.IsNullOrWhiteSpace(siglas))
+        //        throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
 
-            try
-            {
-                return await _context.PartidosPoliticos
-                    .FirstOrDefaultAsync(p => p.Siglas == siglas);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error retrieving Partido_Politico by siglas.", ex);
-            }
-        }
+        //    try
+        //    {
+        //        return await _context.PartidosPoliticos
+        //            .FirstOrDefaultAsync(p => p.Siglas == siglas);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error retrieving Partido_Politico by siglas.", ex);
+        //    }
+        //}
     }
 }

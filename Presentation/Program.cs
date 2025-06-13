@@ -8,10 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
+// Add the custom dependency injection for the persistence layer
+
+
+
 builder.Services.AddDbContext<SADVOContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("SADVOWeb")
-    ));
+    b => b.MigrationsAssembly("SADVO.Persistence"))
+   , ServiceLifetime.Transient);
+
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

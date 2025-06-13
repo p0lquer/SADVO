@@ -1,8 +1,9 @@
 ﻿
 
 using SADVO.Domain.Entities;
+using SADVO.Interfaces.Interface.Repository;
 
-namespace SADVO.Application.Interface.Repository
+namespace SADVO.Domain.Interface.Repository
 {
     public interface IPuestoElectivoRepository : IGeneryRepository<Puesto_Electivo>
     {

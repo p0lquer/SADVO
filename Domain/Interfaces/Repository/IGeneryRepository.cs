@@ -1,8 +1,9 @@
 ﻿
 
-using SADVO.Domain.Entities;
 
-namespace SADVO.Application.Interface.Repository
+
+
+namespace SADVO.Interfaces.Interface.Repository
 {
     public interface IGeneryRepository<T> where T : class
     {

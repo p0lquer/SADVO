@@ -1,9 +1,10 @@
 ﻿using SADVO.Application.DTOs.PartidoPolitico;
-using SADVO.Application.Interface.Repository;
+using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
-
+using SADVO.Interfaces.Interface.Repository;
+using System.Linq;
 namespace SADVO.Application.Service
 {
     namespace SADVO.Application.Service
@@ -11,13 +12,13 @@ namespace SADVO.Application.Service
         public class PartidoPoliticoService : GeneryService<Partido_Politico>, IPartidoPoliticoService
         {
             private readonly IGeneryRepository<Partido_Politico> _generyRepository;
-            private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
+            private readonly IPartidoPoliticoRepository _partidoPoliticoRepository;  
 
-            public PartidoPoliticoService(IGeneryRepository<Partido_Politico> generyRepository, IAlianzasPoliticasRepository alianzasPoliticasRepository)
+            public PartidoPoliticoService(IGeneryRepository<Partido_Politico> generyRepository, IPartidoPoliticoRepository partidoPoliticoRepository)
                 : base(generyRepository)
             {
                 _generyRepository = generyRepository;
-                _alianzasPoliticasRepository = alianzasPoliticasRepository;
+                _partidoPoliticoRepository = partidoPoliticoRepository;
             }
 
             public async Task<bool> ActivarDesactivarPartidoAsync(int partidoId, bool estado)
@@ -28,13 +29,13 @@ namespace SADVO.Application.Service
                     {
                         throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoId));
                     }
-                    var partido = await _alianzasPoliticasRepository.GetByIdAsync(partidoId);
+                    var partido = await _partidoPoliticoRepository.GetByIdAsync(partidoId);
                     if (partido == null)
                     {
                         throw new KeyNotFoundException($"Partido político con ID {partidoId} no encontrado.");
                     }
-                    partido.Estado = EstadoAlianza.Pendiente;
-                    await _alianzasPoliticasRepository.UpdateAsync(partido);
+
+                    await _partidoPoliticoRepository.UpdateAsync(partido);
                     return true;
                 }
                 catch (Exception ex)
@@ -51,14 +52,14 @@ namespace SADVO.Application.Service
                     {
                         throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoId));
                     }
-                    var partido = await _alianzasPoliticasRepository.GetByIdAsync(partidoId);
+                    var partido = await _partidoPoliticoRepository.GetByIdAsync(partidoId);
                     if (partido == null)
                     {
                         throw new KeyNotFoundException($"Partido político con ID {partidoId} no encontrado.");
                     }
 
 
-                    await _alianzasPoliticasRepository.UpdateAsync(partido);
+                    await _partidoPoliticoRepository.UpdateAsync(partido);
                     return true;
                 }
                 catch (Exception ex)
@@ -74,7 +75,7 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("Las siglas no pueden estar vacías.", nameof(siglas));
                 }
-                return await _generyRepository.GetBySiglasAsync(siglas);
+                return await _partidoPoliticoRepository.GetBySiglasAsync(siglas);
             }
 
             public async Task<Partido_Politico?> GetPartidoConDetallesAsync(int partidoId)
@@ -84,21 +85,19 @@ namespace SADVO.Application.Service
                     throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
                 }
 
-                var partido = await _generyRepository.GetByIdAsync(partidoId);
+                var partido = await _partidoPoliticoRepository.GetByIdAsync(partidoId);
                 if (partido == null)
                 {
                     throw new KeyNotFoundException($"Partido político con ID {partidoId} no encontrado.");
                 }
 
-
-                var dirigentes = await _alianzasPoliticasRepository.GetDirigentesByPartidoAsync(partidoId);
-                partido.DirigentePoliticos = dirigentes.ToList(); // Explicitly convert IEnumerable to ICollection
+                var dirigentes = await _partidoPoliticoRepository.GetPartidoWithDirigentesAsync(partidoId);
                 return partido;
             }
 
             public async Task<IEnumerable<Partido_Politico>> GetPartidosActivosAsync()
             {
-                var partidos = await _generyRepository.GetAllAsync();
+                var partidos = await _partidoPoliticoRepository.GetAllAsync();
                 return partidos.Where(p => p.EsActivo);
             }
 
@@ -109,7 +108,7 @@ namespace SADVO.Application.Service
                     throw new ArgumentException("Las siglas no pueden estar vacías.", nameof(siglas));
                 }
 
-                var existe = await _generyRepository.GetBySiglasAsync(siglas);
+                var existe = await _partidoPoliticoRepository.GetBySiglasAsync(siglas);
                 return existe == null;
             }
         }

@@ -1,14 +1,14 @@
-﻿using SADVO.Application.Interface.Repository;
+﻿using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Service
 {
-    public class AlianzasPoliticasService : GeneryService<Alianzas_Politica>, IAlianzasPoliticasServicen
+    public class AlianzasPoliticasService : GeneryService<Alianzas_Politica>, IAlianzasPoliticasService
     {
         private readonly IAlianzasPoliticasRepository _alianzasPoliticasRepository;
 
-        public AlianzasPoliticasService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base( alianzasPoliticasRepository)
+        public AlianzasPoliticasService(IAlianzasPoliticasRepository alianzasPoliticasRepository) : base(alianzasPoliticasRepository)
         {
             _alianzasPoliticasRepository = alianzasPoliticasRepository;
         }

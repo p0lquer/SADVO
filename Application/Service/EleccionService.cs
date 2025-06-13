@@ -1,4 +1,4 @@
-﻿using SADVO.Application.Interface.Repository;
+﻿using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 

@@ -1,7 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using SADVO.Application.Interface.Repository;
+using SADVO.Domain.Interface.Repository;
 using SADVO.Domain.Entities;
 using SADVO.Persistence.Context;
 
@@ -32,22 +32,7 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-        public Task<Partido_Politico?> GetBySiglasAsync(string siglas)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(siglas))
-                {
-                    throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
-                }
-                return Task.FromResult(_context.PartidosPoliticos
-                    .FirstOrDefault(p => p.Siglas.Equals(siglas, StringComparison.OrdinalIgnoreCase)));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error retrieving party with siglas '{siglas}'", ex);
-            }
-        }
+     
         public Task<IEnumerable<Partido_Politico>> GetPartidosActivosAsync()
         {
             try
@@ -63,7 +48,7 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-        public Task<Partido_Politico?> GetPartidoWithDirigentesAsync(int partidoId)
+        public async Task<List<Partido_Politico?>> GetPartidoWithDirigentesAsync(int partidoId)
         {
             try
             {
@@ -71,10 +56,15 @@ namespace SADVO.Persistence.Repository
                 {
                     throw new ArgumentException("Partido ID must be greater than zero, or not Found.", nameof(partidoId));
                 }
-                var partido = _context.PartidosPoliticos
+                var  partido =  await _context.PartidosPoliticos
                      .Include(p => p.DirigentePoliticos)
                      .FirstOrDefaultAsync(p => p.Id == partidoId);
-                return partido;
+
+                if (partido == null)
+                {
+                    return new List<Partido_Politico?>();
+                }
+                return new List<Partido_Politico?> { partido };
 
 
             }
@@ -82,6 +72,32 @@ namespace SADVO.Persistence.Repository
             {
                 throw new Exception($"Error retrieving party with ID {partidoId} and its leaders", ex);
             }
+
+        }
+        public async Task<Partido_Politico> GetBySiglasAsync(string siglas)
+        {
+            if (string.IsNullOrWhiteSpace(siglas))
+            {
+                throw new ArgumentException("Siglas cannot be null or empty.", nameof(siglas));
+            }
+
+            try
+            {
+                var partido = await _context.PartidosPoliticos
+                    .FirstOrDefaultAsync(p => p.Siglas.Equals(siglas, StringComparison.OrdinalIgnoreCase));
+
+                if (partido == null)
+                {
+                    throw new InvalidOperationException($"No party found with siglas '{siglas}'.");
+                }
+
+                return partido;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving party with siglas '{siglas}'", ex);
+            }
         }
     }
 }
+
