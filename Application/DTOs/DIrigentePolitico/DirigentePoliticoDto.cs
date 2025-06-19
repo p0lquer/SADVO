@@ -14,7 +14,7 @@ namespace SADVO.Application.DTOs.AsignacionDirigente
         [Display(Name = "Partido Político")]
         public int PartidoPoliticoId { get; set; }
 
-        // Propiedades de navegación para mostrar en las vistas
+     
         [Display(Name = "Usuario")]
         public string? UsuarioNombre { get; set; }
 

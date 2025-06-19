@@ -6,9 +6,9 @@ namespace SADVO.Application.Service
 {
     public class EleccionService : GeneryService<Eleccion>, IEleccionService
     {
-        private readonly IEleccionRepository _eleccionRepository; // CORREGIDO: Usar IEleccionRepository
+        private readonly IEleccionRepository _eleccionRepository;
 
-        public EleccionService(IEleccionRepository eleccionRepository) // CORREGIDO: Inyectar IEleccionRepository
+        public EleccionService(IEleccionRepository eleccionRepository)
             : base(eleccionRepository)
         {
             _eleccionRepository = eleccionRepository ?? throw new ArgumentNullException(nameof(eleccionRepository));
@@ -25,7 +25,7 @@ namespace SADVO.Application.Service
                 throw new ArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
             }
 
-            // CORREGIDO: Usar el repositorio correcto
+            
             return await _eleccionRepository.GetEleccionesByFechaRangoAsync(fechaInicio, fechaFin);
         }
 
@@ -36,7 +36,7 @@ namespace SADVO.Application.Service
                 throw new ArgumentException("El ID del partido político debe ser mayor que cero.", nameof(partidoId));
             }
 
-            // CORREGIDO: Usar el repositorio correcto
+            
             return await _eleccionRepository.GetEleccionesByPartidoAsync(partidoId);
         }
 
@@ -82,7 +82,6 @@ namespace SADVO.Application.Service
             }
         }
 
-        // MÉTODOS ADICIONALES que deberías agregar a la interfaz IEleccionService
         public async Task<IEnumerable<Eleccion>> GetEleccionesByPuestoElectivoAsync(int puestoElectivoId)
         {
             if (puestoElectivoId <= 0)

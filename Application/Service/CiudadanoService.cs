@@ -1,6 +1,7 @@
 ﻿using SADVO.Domain.Interface.Repository;
 using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
+using SADVO.Application.DTOs.Ciudadano;
 
 namespace SADVO.Application.Service
 {
@@ -38,7 +39,7 @@ namespace SADVO.Application.Service
             }
         }
 
-        public async Task<IEnumerable<Ciudadano>> BuscarCiudadanosAsync(string criterio)
+        public async Task<IEnumerable<CiudadanoDto>> BuscarCiudadanosAsync(string criterio)
         {
             try
             {
@@ -49,11 +50,20 @@ namespace SADVO.Application.Service
 
                 var ciudadanos = await _ciudadanoRepository.GetAllAsync();
 
-                return ciudadanos.Where(c =>
-                    c.Nombre.Contains(criterio, StringComparison.OrdinalIgnoreCase) ||
-                    c.Apellido.Contains(criterio, StringComparison.OrdinalIgnoreCase) ||
-                    c.NumeroIdentificacion.Contains(criterio, StringComparison.OrdinalIgnoreCase) ||
-                    c.Email.Contains(criterio, StringComparison.OrdinalIgnoreCase));
+                return ciudadanos
+                    .Where(c => c.Nombre.Contains(criterio, StringComparison.OrdinalIgnoreCase) ||
+                                c.Apellido.Contains(criterio, StringComparison.OrdinalIgnoreCase) ||
+                                c.NumeroIdentificacion.Contains(criterio, StringComparison.OrdinalIgnoreCase))
+                    .Select(c => new CiudadanoDto
+                    {
+                        Id = c.Id,
+                        Nombre = c.Nombre,
+                        Apellido = c.Apellido,
+                        NumeroIdentificacion = c.NumeroIdentificacion,
+                        Email = c.Email,
+                        EsActivo = c.EsActivo
+                    })
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -145,5 +155,7 @@ namespace SADVO.Application.Service
                 throw new Exception("Error adding a new citizen", ex);
             }
         }
+
+      
     }
 }

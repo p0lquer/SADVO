@@ -78,5 +78,19 @@ namespace SADVO.Application.Service
                 throw new Exception("Error updating entity", ex);
             }
         }
+
+        public virtual IQueryable<T> GetAllQuery()
+        {
+            try
+            {
+                return  generyRepository.GetQueryableAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving queryable entities", ex);
+            }
+        }
+
+       
     }
 }

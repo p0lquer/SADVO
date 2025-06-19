@@ -1,4 +1,4 @@
-
+using SADVO.Persistence.IOc;
 using Microsoft.EntityFrameworkCore;
 using SADVO.Persistence.Context;
 
@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 
 
 // Add the custom dependency injection for the persistence layer
-
+builder.Services.AddPersistenceInfrastructure();
 
 
 builder.Services.AddDbContext<SADVOContext>(options =>

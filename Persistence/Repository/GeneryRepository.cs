@@ -112,6 +112,10 @@ namespace SADVO.Persistence.Repository
             }
         }
 
-      
+        public IQueryable<T> GetQueryableAsync()
+        {
+            return _context.Set<T>().AsQueryable();//select * from assetsType // where join //deferred execution
+
+        }
     }
 }

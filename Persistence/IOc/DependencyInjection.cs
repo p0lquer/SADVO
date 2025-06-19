@@ -17,28 +17,28 @@ namespace SADVO.Persistence.IOc
         {
 
             // Repositories
-            services.AddScoped(typeof(IGeneryRepository<>), typeof(GeneryRepository<>));
-            services.AddScoped<IEleccionRepository, EleccionRepository>();
-            services.AddScoped<IDirigentePoliticoRepository, DirigentePoliticoRepository>();
-            services.AddScoped<IPartidoPoliticoRepository, PartidoPoliticoRepository>();
-            services.AddScoped<ICandidatoRepository, CandidatoRepository>();
-            services.AddScoped<IAlianzasPoliticasRepository, AlianzasPoliticasRepository>();
-            services.AddScoped<IUsuariosRepository, UsuariosRepository>();
-            services.AddScoped<IPuestoElectivoRepository, PuestoElectivoRepository>();
-            services.AddScoped<IAsignarCandidatoRepository, AsignarCandidatoRepository>();
-            services.AddScoped<ICiudadanoRepository,CiudadanoRepository>();
+            services.AddTransient(typeof(IGeneryRepository<>), typeof(GeneryRepository<>));
+            services.AddTransient<IEleccionRepository, EleccionRepository>();
+            services.AddTransient<IDirigentePoliticoRepository, DirigentePoliticoRepository>();
+            services.AddTransient<IPartidoPoliticoRepository, PartidoPoliticoRepository>();
+            services.AddTransient<ICandidatoRepository, CandidatoRepository>();
+            services.AddTransient<IAlianzasPoliticasRepository, AlianzasPoliticasRepository>();
+            services.AddTransient<IUsuariosRepository, UsuariosRepository>();
+            services.AddTransient<IPuestoElectivoRepository, PuestoElectivoRepository>();
+            services.AddTransient<IAsignarCandidatoRepository, AsignarCandidatoRepository>();
+            services.AddTransient<ICiudadanoRepository,CiudadanoRepository>();
 
             //Service 
-            services.AddScoped(typeof(IGeneryService<>), typeof(GeneryService<>));
-            services.AddScoped<IEleccionService, EleccionService>();
-            services.AddScoped<IDirigentePoliticoService, DirigentePoliticoService>();
-            services.AddScoped<IPartidoPoliticoService, PartidoPoliticoService>();
-            services.AddScoped<ICandidatoService, CandidatoService>();
+            services.AddTransient(typeof(IGeneryService<>), typeof(GeneryService<>));
+            services.AddTransient<IEleccionService, EleccionService>();
+            services.AddTransient<IDirigentePoliticoService, DirigentePoliticoService>();
+            services.AddTransient<IPartidoPoliticoService, PartidoPoliticoService>();
+            services.AddTransient<ICandidatoService, CandidatoService>();
             //services.AddScoped<IAlianzasPoliticasService, AlianzasPoliticasService>();
-            services.AddScoped<IUsuariosService, UsuariosService>();
-            services.AddScoped<IPuestoElectivoService, PuestoElectivoService>();
-            services.AddScoped<IAsignarCandidatoService, AsignarCandidatoService>();
-            services.AddScoped<ICiudadanoService, CiudadanoService>();
+            services.AddTransient<IUsuariosService, UsuariosService>();
+            services.AddTransient<IPuestoElectivoService, PuestoElectivoService>();
+            services.AddTransient<IAsignarCandidatoService, AsignarCandidatoService>();
+            services.AddTransient<ICiudadanoService, CiudadanoService>();
 
 
 

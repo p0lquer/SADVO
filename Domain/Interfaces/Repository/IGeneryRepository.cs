@@ -12,7 +12,6 @@ namespace SADVO.Interfaces.Interface.Repository
         Task<T> AddAsync(T entity);
         Task<T> UpdateAsync(T entity);
         Task<bool> DeleteAsync(int id);
-
-       
+        IQueryable<T> GetQueryableAsync();
     }
 }

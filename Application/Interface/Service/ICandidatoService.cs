@@ -1,15 +1,21 @@
 ﻿
 
+using SADVO.Application.DTOs.Candidato;
+using SADVO.Application.ViewModels.CandidatoVM;
 using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Interface.Service
 {
     public interface ICandidatoService : IGeneryService<Candidato>
     {
-        Task<IEnumerable<Candidato>> GetCandidatosByPartidoAsync(int partidoId);
-        Task<IEnumerable<Candidato>> GetCandidatosActivosAsync();
+        Task<IEnumerable<CandidatoDto>> GetCandidatosByPartidoAsync(int partidoId);
+        Task<IEnumerable<CandidatoDto>> GetCandidatosActivosAsync();
         Task<bool> ActivarDesactivarCandidatoAsync(int candidatoId, bool estado);
         Task<bool> ActualizarFotoCandidatoAsync(int candidatoId, string nuevaFoto);
-        Task<bool> ValidarCandidatoUnicoAsync(string apellido, int partidoId);
+          Task<bool> ValidarCandidatoUnicoAsync(string apellido);
+
+    
+
+       
     }
 }

@@ -9,5 +9,7 @@ namespace SADVO.Application.Interface.Service
         Task<T> CreateAsync(T entity);
         Task<T> UpdateAsync(T entity);
         Task<bool> DeleteAsync(int id);
+        IQueryable<T> GetAllQuery();
+
     }
 }

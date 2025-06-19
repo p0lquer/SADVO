@@ -3,6 +3,8 @@ using SADVO.Application.Interface.Service;
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
 using SADVO.Interfaces.Interface.Repository;
+using SADVO.Application.ViewModels.CandidatoVM;
+using SADVO.Application.DTOs.Candidato;
 
 namespace SADVO.Application.Service
 {
@@ -15,6 +17,42 @@ namespace SADVO.Application.Service
         {
             _candidatoRepository = candidatoRepository;
         }
+
+
+        public async Task<CandidatoDto> CreateAsync(CandidatoDto vm)
+        {
+
+            var entity = new Candidato
+            {
+                Apellido = vm.Apellido,
+
+                Foto = vm.Foto,
+                Nombre = vm.Nombre,
+                EsActivo = vm.EsActivo,
+                PuestoElectivo = vm.PuestoElectivo,
+                Partido = vm.Partido
+            };
+
+           var servicio = await _candidatoRepository.AddAsync(entity);
+            if (servicio == null)
+            {
+                throw new Exception("Error al crear el candidato.");
+            }
+            return new CandidatoDto
+            {
+                Id = servicio.Id,
+                Nombre = servicio.Nombre,
+                Apellido = servicio.Apellido,
+                Foto = servicio.Foto,
+                EsActivo = servicio.EsActivo,
+                PuestoElectivo = servicio.PuestoElectivo,
+                Partido = servicio.Partido,
+                    PuestoElectivoId = servicio.PuestoElectivoId ?? 0, // Ensure required property is set
+                PartidoId = servicio.PartidoId ?? 0,
+            };
+
+        }
+
 
         public async Task<bool> ActivarDesactivarCandidatoAsync(int candidatoId, bool estado)
         {
@@ -72,7 +110,18 @@ namespace SADVO.Application.Service
                 {
                     return Enumerable.Empty<Candidato>();
                 }
-                return (IEnumerable<Candidato>)candidatos.Where(c => c.EsActivo == true);
+                return candidatos.Where(c => c.EsActivo == true).Select(candidatos => new Candidato
+                {
+                    Id = candidatos.Id,
+                    Nombre = candidatos.Nombre, 
+                    Apellido = candidatos.Apellido,
+                    Foto = candidatos.Foto,
+                    EsActivo = candidatos.EsActivo,
+                    Partido = candidatos.Partido,
+                    PuestoElectivo = candidatos.PuestoElectivo,
+                    TypeCandidate = candidatos.TypeCandidate
+
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -81,7 +130,7 @@ namespace SADVO.Application.Service
         }
 
 
-        public async Task<IEnumerable<Candidato>> GetCandidatosByPartidoAsync(int partidoId)
+        public async Task<IEnumerable<CandidatoDto>> GetCandidatosByPartidoAsync(int partidoId)
         {
             try
             {
@@ -90,7 +139,7 @@ namespace SADVO.Application.Service
                     throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
                 }
                 var candidatos = await _candidatoRepository.GetAllAsync();
-                return (IEnumerable<Candidato>) candidatos.Where(c => c.Equals(partidoId) && c.Partido.EsActivo);
+                return (IEnumerable<CandidatoDto>) candidatos.Where(c => c.Equals(partidoId) && c.Partido.EsActivo);
             }
             catch (Exception ex)
             {
@@ -99,7 +148,7 @@ namespace SADVO.Application.Service
             }
         }
 
-        public async Task<bool> ValidarCandidatoUnicoAsync(string apellido, int partidoId)
+        public async Task<bool> ValidarCandidatoUnicoAsync(string apellido)
         {
             try
             {
@@ -107,17 +156,44 @@ namespace SADVO.Application.Service
                 {
                     throw new ArgumentException("El apellido no puede ser null o vacío y debe tener un máximo de 12 caracteres.", nameof(apellido));
                 }
-                if (partidoId <= 0)
-                {
-                    throw new ArgumentException("El ID del partido debe ser mayor que cero.", nameof(partidoId));
-                }
+               
                 var candidatos = await _candidatoRepository.GetAllAsync();
-                return !candidatos.Any(c => c.Apellido.Equals(apellido, StringComparison.OrdinalIgnoreCase) && c.PartidoId== partidoId && c.EsActivo == true);
+                return !candidatos.Any(c => c.Apellido.Equals(apellido, StringComparison.OrdinalIgnoreCase));
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error validating unique candidate by last name {apellido} and party ID {partidoId}", ex);
+                throw new Exception($"Error validating unique candidate by last name {apellido}", ex);
             }
+        }
+
+        
+        public async Task<CandidatoDto> UpdateAsync(CandidatoDto dto, int id)
+        {
+            var entity = await _candidatoRepository.GetByIdAsync(dto.Id);
+            if (entity == null) 
+                throw new Exception("Error");
+
+            entity.Apellido = dto.Apellido;
+            entity.Foto = dto.Foto;
+            // ...other updates
+
+            await _candidatoRepository.UpdateAsync(entity);
+            return
+                new CandidatoDto
+                {
+                    Id = entity.Id,
+                    Nombre = entity.Nombre,
+                    EsActivo = entity.EsActivo,
+                    Apellido = entity.Apellido,
+                    Foto = entity.Foto,
+                    PuestoElectivoId = entity.PuestoElectivoId ?? 0, // Ensure this required property is set
+                    PartidoId = entity.PartidoId ?? 0
+                };
+        }
+
+        Task<IEnumerable<CandidatoDto>> ICandidatoService.GetCandidatosActivosAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

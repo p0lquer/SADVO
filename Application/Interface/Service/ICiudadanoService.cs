@@ -1,5 +1,6 @@
 ﻿
 
+using SADVO.Application.DTOs.Ciudadano;
 using SADVO.Domain.Entities;
 
 namespace SADVO.Application.Interface.Service
@@ -9,9 +10,8 @@ namespace SADVO.Application.Interface.Service
         Task<Ciudadano?> GetByNumeroIdentificacionAsync(string numeroIdentificacion);
         Task<bool> ValidarCiudadanoUnicoAsync(string numeroIdentificacion, string email);
         Task<bool> ActivarDesactivarCiudadanoAsync(int ciudadanoId, bool estado);
-        Task<IEnumerable<Ciudadano>> BuscarCiudadanosAsync(string criterio);
-        Task<IEnumerable<Ciudadano>> GetCiudadanosActivosAsync(); // Added this method
-
+        Task<IEnumerable<CiudadanoDto>> BuscarCiudadanosAsync(string criterio);
+        Task<IEnumerable<Ciudadano>> GetCiudadanosActivosAsync(); 
         Task AddAsync(Ciudadano ciudadano);
     }
 }

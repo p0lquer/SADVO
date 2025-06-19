@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SADVO.Application.Interface.Service;
 using SADVO.Application.DTOs.PartidoPolitico;
 using SADVO.Domain.Entities;
+using SADVO.Application.ViewModels.PartidoPoliticoVM;
 
 namespace SADVOWeb.Controllers
 {
@@ -21,7 +22,7 @@ namespace SADVOWeb.Controllers
             try
             {
                 var partidosActivos = await _partidoPoliticoService.GetPartidosActivosAsync();
-                var partidosDto = partidosActivos.Select(p => new PartidoDto
+                var partidos = partidosActivos.Select(p => new PartidoPoliticoViewModel
                 {
                     Id = p.Id,
                     Nombre = p.Nombre,
@@ -30,7 +31,7 @@ namespace SADVOWeb.Controllers
                     Description = p.Description,
                     Logo = p.Logo
                 });
-                return View(partidosDto);
+                return View(partidos);
             }
             catch (Exception ex)
             {
@@ -79,7 +80,7 @@ namespace SADVOWeb.Controllers
         // GET: PartidoPolitico/Create
         public ActionResult Create()
         {
-            return View(new CreatePartidoDto
+            return View(new PartidoDto
             {
                 Siglas = string.Empty,
                 Description = string.Empty,
@@ -92,7 +93,7 @@ namespace SADVOWeb.Controllers
         // POST: PartidoPolitico/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreatePartidoDto createDto)
+        public async Task<ActionResult> Create(PartidoDto createDto)
         {
             try
             {
@@ -148,7 +149,7 @@ namespace SADVOWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var updateDto = new UpdatePartidoDto
+                var updateDto = new PartidoDto
                 {
                     Id = partido.Id,
                     Nombre = partido.Nombre,
@@ -170,7 +171,7 @@ namespace SADVOWeb.Controllers
         // POST: PartidoPolitico/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, UpdatePartidoDto updateDto)
+        public async Task<ActionResult> Edit(int id, PartidoDto updateDto)
         {
             try
             {

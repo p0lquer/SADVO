@@ -5,6 +5,7 @@ using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
 using SADVO.Interfaces.Interface.Repository;
 using System.Linq;
+using SADVO.Application.DTOs.Ciudadano;
 namespace SADVO.Application.Service
 {
     namespace SADVO.Application.Service
@@ -69,13 +70,28 @@ namespace SADVO.Application.Service
                 }
             }
 
-            public async Task<Partido_Politico?> GetBySiglasAsync(string siglas)
+            public async Task<PartidoDto> GetBySiglasAsync(string siglas)
             {
                 if (string.IsNullOrWhiteSpace(siglas))
                 {
                     throw new ArgumentException("Las siglas no pueden estar vacías.", nameof(siglas));
                 }
-                return await _partidoPoliticoRepository.GetBySiglasAsync(siglas);
+
+
+                var partidos = await _partidoPoliticoRepository.GetAllAsync();
+                var partidosPorSiglas = partidos
+                    .Where(p => p.Siglas.Equals(siglas, StringComparison.OrdinalIgnoreCase))
+                    .Select(p => new PartidoDto
+                    {
+                        Id = p.Id,
+                        Nombre = p.Nombre,
+                        EsActivo = p.EsActivo,
+                        Siglas = p.Siglas,
+                        Description = p.Description,
+                        Logo = p.Logo
+
+                    });
+                return partidosPorSiglas;
             }
 
             public async Task<Partido_Politico?> GetPartidoConDetallesAsync(int partidoId)

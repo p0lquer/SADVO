@@ -4,6 +4,7 @@ using SADVO.Application.Interface.Service;
 using SADVO.Application.DTOs.Candidato;
 using SADVO.Domain.Entities;
 using SADVO.Domain.Enumns;
+using SADVO.Application.ViewModels.CandidatoVM;
 
 namespace SADVOWeb.Controllers
 {
@@ -17,12 +18,12 @@ namespace SADVOWeb.Controllers
         }
 
         // GET: CandidatoController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
                 var candidatos = await _candidatoService.GetCandidatosActivosAsync();
-                var candidatosDto = candidatos.Select(c => new CandidatoDto
+                var candidatosVm = candidatos.Select(c => new CandidatoViewModel
                 {
                     Id = c.Id,
                     Nombre = c.Nombre,
@@ -31,13 +32,13 @@ namespace SADVOWeb.Controllers
                     Foto = c.Foto
                 }).ToList();
 
-                return View(candidatosDto);
+                return View(candidatosVm);
             }
             catch (Exception ex)
             {
                 // Log the exception
                 TempData["Error"] = "Error al cargar los candidatos: " + ex.Message;
-                return View(new List<CandidatoDto>());
+                return View(new List<CandidatoViewModel>());
             }
         }
 
@@ -46,27 +47,27 @@ namespace SADVOWeb.Controllers
         {
             try
             {
-                if (id <= 0)
-                {
-                    return BadRequest("ID de candidato inválido");
-                }
-
                 var candidato = await _candidatoService.GetByIdAsync(id);
                 if (candidato == null)
                 {
-                    return NotFound($"Candidato con ID {id} no encontrado");
+                    TempData["Error"] = $"Candidato con ID {id} no encontrado";
+                    return RedirectToAction(nameof(Index));
                 }
 
-                var candidatoDto = new CandidatoDto
+              
+
+                // Convert DTO to ViewModel
+                var candidatoViewModel = new CandidatoViewModel
                 {
                     Id = candidato.Id,
                     Nombre = candidato.Nombre,
                     EsActivo = candidato.EsActivo,
                     Apellido = candidato.Apellido,
                     Foto = candidato.Foto
+                    
                 };
 
-                return View(candidatoDto);
+                return View(candidatoViewModel);
             }
             catch (Exception ex)
             {
@@ -92,66 +93,57 @@ namespace SADVOWeb.Controllers
         // POST: CandidatoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateCandidatoDto createCandidatoDto)
+        public async Task<IActionResult> Create(CreateCandidatoViewModel candidatoVm)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return View(createCandidatoDto);
+                    return View(candidatoVm);
                 }
 
                 // Validar candidato único
                 var esUnico = await _candidatoService.ValidarCandidatoUnicoAsync(
-                    createCandidatoDto.Apellido,
-                    createCandidatoDto.PartidoId);
+                    candidatoVm.Apellido);
 
                 if (!esUnico)
                 {
-                    ModelState.AddModelError("", "Ya existe un candidato con ese apellido en el partido seleccionado");
-                    return View(createCandidatoDto);
+                   ModelState.AddModelError("", "Ya existe un candidato con ese apellido en el partido seleccionado");
+                    return View(candidatoVm);
                 }
 
-                // Mapear DTO a entidad
-                var candidato = new Candidato
+               
+
+                await _candidatoService.CreateAsync(new Candidato
                 {
-                    Apellido = createCandidatoDto.Apellido,
-                    PartidoId = createCandidatoDto.PartidoId,
-                    PuestoElectivoId = createCandidatoDto.PuestoElectivoId,
-                    Foto = createCandidatoDto.Foto,
-                    TypeCandidate = createCandidatoDto.TipoCandidato,
-                 
-                    Nombre = createCandidatoDto.nombre,
-                    EsActivo = true,
-                    PuestoElectivo = new Puesto_Electivo
-                    {
-                        Nombre = "Default Nombre", // Required member
-                        EsActivo = true,          // Required member
-                        Description = "Default Description" // Required member
-                    },
+                
+                    Nombre = candidatoVm.Nombre,
+                    Apellido = candidatoVm.Apellido,
+                    Foto = candidatoVm.Foto,
+                    EsActivo = candidatoVm.EsActivo,
+                    PuestoElectivoId = candidatoVm.PuestoElectivoId,
+                    PartidoId = candidatoVm.PartidoId,
+                    PuestoElectivo = candidatoVm.PuestoElectivo ?? null,
+                    Partido = candidatoVm.Partido ?? null,
+                });
 
-                    Partido = new Partido_Politico
-                    {
-                        Nombre = "Default Nombre", 
-                        EsActivo = true,          
-                        Siglas = "Default Siglas", 
-                        Description = "Default Description", 
-                        Logo = "Default Logo" 
-                    }     
-                };
+                // Si la creación es exitosa, redirigir a la lista de candidatos
 
-                await _candidatoService.CreateAsync(candidato);
+
+
+
                 TempData["Success"] = "Candidato creado exitosamente";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al crear el candidato: " + ex.Message;
-                return View(createCandidatoDto);
+                return View(candidatoVm);
             }
         }
 
-        // GET: CandidatoController/Edit/5
+
+       // GET: CandidatoController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
             try
@@ -161,22 +153,15 @@ namespace SADVOWeb.Controllers
                     return BadRequest("ID de candidato inválido");
                 }
 
-                var candidato = await _candidatoService.GetByIdAsync(id);
-                if (candidato == null)
+                var candidatoVm = await _candidatoService.GetByIdAsync(id);
+                if (candidatoVm == null)
                 {
                     return NotFound($"Candidato con ID {id} no encontrado");
                 }
 
-                var updateCandidatoDto = new UpdateCandidatoDto
-                {
-                    Id = candidato.Id,
-                    Nombre = candidato.Nombre,
-                    EsActivo = candidato.EsActivo,
-                    Apellido = candidato.Apellido,
-                    Foto = candidato.Foto
-                };
 
-                return View(updateCandidatoDto);
+
+                return View(candidatoVm);
             }
             catch (Exception ex)
             {
@@ -185,70 +170,60 @@ namespace SADVOWeb.Controllers
             }
         }
 
-        // POST: CandidatoController/Edit/5
+     //   POST: CandidatoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, UpdateCandidatoDto updateCandidatoDto)
+        public async Task<IActionResult> Edit(int id,CandidatoDto candidatoDto)
         {
-            try
+            if (id != candidatoDto.Id)
+                return BadRequest("ID de candidato no coincide");
+
+            if (!ModelState.IsValid)
+                return View(await _candidatoService.GetByIdAsync(id));
+            if (candidatoDto == null)
             {
-                if (id != updateCandidatoDto.Id)
-                {
-                    return BadRequest("ID de candidato no coincide");
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    return View(updateCandidatoDto);
-                }
-
-                var candidatoExistente = await _candidatoService.GetByIdAsync(id);
-                if (candidatoExistente == null)
-                {
-                    return NotFound($"Candidato con ID {id} no encontrado");
-                }
-
-                // Actualizar propiedades
-                candidatoExistente.Apellido = updateCandidatoDto.Apellido;
-                candidatoExistente.Foto = updateCandidatoDto.Foto;
-
-                await _candidatoService.UpdateAsync(candidatoExistente);
-                TempData["Success"] = "Candidato actualizado exitosamente";
-                return RedirectToAction(nameof(Index));
+                throw new ArgumentNullException(nameof(candidatoDto), "El DTO de actualización no puede ser nulo");
             }
-            catch (Exception ex)
+            var candidatoEntity = new Candidato
             {
-                TempData["Error"] = "Error al actualizar el candidato: " + ex.Message;
-                return View(updateCandidatoDto);
+                Id = candidatoDto.Id,
+                Nombre = candidatoDto.Nombre,
+                EsActivo = candidatoDto.EsActivo,
+                Apellido = candidatoDto.Apellido,
+                Foto = candidatoDto.Foto,
+                PuestoElectivoId = candidatoDto.PuestoElectivoId,
+                PartidoId = candidatoDto.PartidoId,
+                PuestoElectivo = candidatoDto.PuestoElectivo,
+                Partido = candidatoDto.Partido,
+                TypeCandidate = candidatoDto.TypeCandidate
+            };
+
+            var result = await _candidatoService.UpdateAsync(candidatoEntity);
+            if (result == null)
+            {
+                TempData["Error"] = "No se pudo actualizar el candidato";
+                return View(await _candidatoService.GetByIdAsync(id));
             }
+
+            TempData["Success"] = "Candidato actualizado exitosamente";
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: CandidatoController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                if (id <= 0)
-                {
-                    return BadRequest("ID de candidato inválido");
-                }
-
-                var candidato = await _candidatoService.GetByIdAsync(id);
-                if (candidato == null)
+               
+                var candidatoViewModel = await _candidatoService.GetByIdAsync(id);
+                if (candidatoViewModel == null)
                 {
                     return NotFound($"Candidato con ID {id} no encontrado");
                 }
 
-                var candidatoDto = new CandidatoDto
-                {
-                    Id = candidato.Id,
-                    Nombre = candidato.Nombre,
-                    EsActivo = candidato.EsActivo,
-                    Apellido = candidato.Apellido,
-                    Foto = candidato.Foto
-                };
-
-                return View(candidatoDto);
+            
+                return View(candidatoViewModel);
             }
             catch (Exception ex)
             {
@@ -305,11 +280,22 @@ namespace SADVOWeb.Controllers
                     Nombre = c.Nombre,
                     EsActivo = c.EsActivo,
                     Apellido = c.Apellido,
-                    Foto = c.Foto
+                    Foto = c.Foto,
+                     PuestoElectivoId = c.PuestoElectivoId, // Ensure this required property is set
+                    PartidoId = c.PartidoId
                 }).ToList();
 
                 ViewBag.PartidoId = partidoId;
-                return View("Index", candidatosDto);
+
+                var candidatoViewModel = candidatosDto.Select(c => new CandidatoViewModel
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    EsActivo = c.EsActivo,
+                    Apellido = c.Apellido,
+                    Foto = c.Foto
+                }).ToList();
+                return View("Index", candidatoViewModel);
             }
             catch (Exception ex)
             {
@@ -347,17 +333,17 @@ namespace SADVOWeb.Controllers
         // POST: CandidatoController/ActualizarFoto/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ActualizarFoto(int id, string nuevaFoto)
+        public async Task<ActionResult> ActualizarFoto(CandidatoDto candidatoDto)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(nuevaFoto))
+                if (string.IsNullOrWhiteSpace(candidatoDto.Foto))
                 {
                     TempData["Error"] = "La nueva foto no puede estar vacía";
-                    return RedirectToAction(nameof(Details), new { id });
+                    return RedirectToAction(nameof(Details), new { candidatoDto.Id });
                 }
 
-                var resultado = await _candidatoService.ActualizarFotoCandidatoAsync(id, nuevaFoto);
+                var resultado = await _candidatoService.ActualizarFotoCandidatoAsync(candidatoDto.Id, candidatoDto.Foto);
                 if (resultado)
                 {
                     TempData["Success"] = "Foto del candidato actualizada exitosamente";
@@ -367,12 +353,12 @@ namespace SADVOWeb.Controllers
                     TempData["Error"] = "No se pudo actualizar la foto del candidato";
                 }
 
-                return RedirectToAction(nameof(Details), new { id });
+                return RedirectToAction(nameof(Details), new { candidatoDto.Id });
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al actualizar la foto: " + ex.Message;
-                return RedirectToAction(nameof(Details), new { id });
+                return RedirectToAction(nameof(Details), new { candidatoDto.Id });
             }
         }
     }
